@@ -1,0 +1,123 @@
+/*====================
+start of  club model css
+====================*/
+body{
+    background-color: #ebeff5;
+}
+.profile-pic{
+  max-width: 35px ;
+  max-height: 35px;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+
+/*==============================
+=>  Profile
+================================*/
+.profile {
+  margin-bottom: 3rem;
+}
+
+.profile_pic {
+  max-width: 100px ;
+  max-height: 100px;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+.profile__avatar {
+  text-align: center;
+}
+
+.profile__info {
+  text-align: center;
+}
+
+.profile__info h3 {
+  font-size: 2rem;
+  color: var(--color-light);
+  font-weight: 400;
+}
+
+.profile__info p {
+  color: var(--color-main);
+  font-weight: 200;
+  margin-bottom: 1rem;
+}
+
+.profile__about {
+  margin-top: 2rem;
+}
+
+.profile__about h3 {
+  text-transform: uppercase;
+  color: var(--color-dark-light);
+  margin-bottom: 0.5rem;
+}
+
+.profile-page .roomList__header {
+  margin-bottom: 1.5rem;
+}
+
+.profile-page .roomList__header h2 {
+  color: var(--color-dark-light);
+}
+
+
+
+#card01{
+  background-color: purple;
+  text-decoration: none;
+}
+
+@media(max-width=800px){
+  #card01{
+    flex: 100%;
+    max-width: 600px;
+  }
+}
+#row2{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.button {
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.button:hover {
+  background-color: #f1f1f1;
+ } 
+
+
+
+/*==============================
+=>  card event
+================================*/
+#card-header{
+  text-align:center;
+  color:dark ;
+  font-weight: 100px;
+  font-weight: 100px;
+  background-color:#4A51A8 ;
+}
+
+
+.card-img-top {
+  width: 100%;
+  height:auto;
+}
+
+/*==============================
+=>  End of  card event
+================================*/
+

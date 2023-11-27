@@ -1,0 +1,75 @@
+{% extends 'root.html' %}
+{%load static%}
+{% block title%}
+ Make_Contribution
+{% endblock %}
+{% block content %}  
+<link rel="stylesheet" href="{% static 'assets/css/partner.css' %}">
+<script src="https://www.paypal.com/sdk/js?client-id=AWDOpVQ_oQT07_KR4nR1MWLBS9GBSHe6yhygMbaLfUEtGeLAfE5gtd2myTNlJwAWUs7JEkCYCkoSnHc5&currency=USD"></script>
+<!-- Delete -->
+<div id="container">
+        <div class="row">
+            <div id="left-wrapper">
+                <img id="profile-pic" src="{% static 'assets/img/allan.jpg' %}">
+                <div id="left-wrapper-header">
+                    <h3> Do You Want To Contribute :${{contribute.amount}}KSH</h3>
+                    <h5>Amount :${{contribute.amount}}</h5>
+                </div>
+                <div style="clear:left"></div>
+                <hr>
+                <!-- Add form here -->
+                <form >
+                
+                 <div id="paypal-button-container"></div>
+                </form>
+
+            
+            </div>
+        </div>
+        <br><br>
+        <div class="column-12">
+            <img src="{% static 'assets/img/paypal.png'%}">
+            <br><br>
+            <img src="{% static 'assets/img/pay.jpg'%}">
+        </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <script>
+        var total ={{contribute.amount}}
+
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+            style: {
+                color:  'blue',
+                shape:  'rect',
+                label:  'pay',
+                height: 40
+            },
+
+
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{contribute.amount}}'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(orderData) {
+                    // Successful capture! For demo purposes:
+                      console.log('Capture result', orderData);
+                      window.location.href = '{% url "group_contributions" groups.id%}';
+                     //Or go to another URL:  actions.redirect('sucess.html')
+                });
+            }
+
+
+        }).render('#paypal-button-container');
+    </script>   
+          
+    
+{% endblock %}

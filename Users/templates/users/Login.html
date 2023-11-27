@@ -1,0 +1,49 @@
+{% extends 'Main/index.html'%}
+{% load static %}
+{% block title %}
+ Homepage
+{% endblock %}
+<
+{% block content %}
+  <div class="login-box">
+        <div class="login-logo">
+            <b>Online Chama System </b>
+        </div>
+
+        <div class="login-box-body">
+            <!-- <p class="login-box-msg">Sign in to start your session</p> -->
+
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" name="email" placeholder="Email" required>
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" name="login"><i class="fa fa-sign-in"></i>  Let Me In</button>
+                    </div>
+
+                    <div class="mt-4" class="cd">
+                        <div class="d-flex justify-content-center links">
+                            Did you forget your password? <a href="{% url 'request-password' %}"class="ml-2">Reset</a>
+                        </div>
+                   </div>
+                   <div class="mt-4" class="cd">
+                        <div class="d-flex justify-content-center links">
+                            Don't Have Account ?  <a href="{% url 'account_register' %}" class="ml-2">Sign Up Here</a>
+                        </div>
+                   </div>
+            
+                </div>
+                </div>
+            </form>
+        </div>
+            </div>
+
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'root.html' %}
+{% block title%}
+Members_List
+{% endblock %}
+{% block content %}
+<section class="content">
+  <div class="row">
+<div class="col-xs-12">
+<div class="box">
+<div class="box-header with-border">
+  {% if request.user == groups.Chairperson %}
+  <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
+          class="fa fa-plus"></i> Add New</a>
+  {% endif %}
+</div>
+<div class="box-body">
+  <table id="example1" class="table table-bordered table-hover table-striped">
+    <thead style="background-color: #222D32; color:white;">
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Email</th>
+          <th>Email_Verification</th>
+          <th>Phone number</th>
+          <th>Action</th>
+      </thead>
+      <tbody>
+      
+    
+    {% for member in members %} 
+    <tr>
+      <td>{{ member.user.first_name }}</td>
+      <td>{{ member.user.last_name }}</td>
+      <td>{{ member.user.email }}</td>
+      <td>{{ member.user.is_email_verified }}</td>
+      <td>{{member.user.phone}}</td>
+      {% if request.user == groups.Chairperson %}
+      <td>
+
+        <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{ member.id }}'><i class='fa fa-trash'></i>remove member</button>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}      
+
+   </tbody>
+  </table>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="addnew">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Add New Members</b></h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" method="POST" action="{% url 'view_members' groups.id %}">
+              {% csrf_token %}
+
+             
+              <div class="modal-body">
+                  {% for field in user_form  %}
+                  <div class="form-group has-feedback">
+                      <span class="text-danger">{{field.errors}}</span>
+                      {{field.label_tag}}
+                      {{field}}
+                  </div>
+                  {% endfor %}
+
+                  {% for field in member_form  %}
+                  <div class="form-group has-feedback">
+                      <span class="text-danger">{{field.errors}}</span>
+                      {{field.label_tag}}
+                      {{field}}
+                  </div>
+                  {% endfor %}
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Save</button>
+          </div></form></div></div></div></div>
+
+<!-- Delete -->
+<div class="modal fade" id="delete">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Removing...</b></h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="">
+
+            <input type="hidden" class="id" name="id" value="{{ member.id }}">
+              {% csrf_token %}
+              <div class="text-center">
+                  <p>Remove member</p>
+                  <h2 class="bold fullname"></h2>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class="btn btn-danger btn-flat" name="delete"><i class="fa fa-trash"></i> Delete</button>
+            </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock modal %}
+
+
+
+{% block custom_js %}
+  
+<script>
+  $(function() {
+      $(document).on('click', '.edit', function(e) {
+          e.preventDefault();
+          $('#edit').modal('show');
+          var id = $(this).data('id');
+          getRow(id);
+      });
+
+      $(document).on('click', '.delete', function(e) {
+          e.preventDefault();
+          $('#delete').modal('show');
+          var id = $(this).data('id');
+          getRow(id);
+      });
+
+
+  });
+  </script>
+{% endblock custom_js %}
+  

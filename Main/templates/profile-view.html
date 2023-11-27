@@ -1,0 +1,59 @@
+{%extends 'root.html'%}
+{% load static %}
+{% block title %}
+ update-profile
+{% endblock %}
+{% block content %}
+<!-- Main style sheet -->
+<link href="{% static 'css/clubs.css' %}" rel="stylesheet">
+<link href="{% static 'css/profile-user.css' %}" rel="stylesheet">
+<section class="content">
+<div class="row ">
+    <div class="col-md-4">
+        <div class="card card-body">
+            <a class="btn btn-warning" href="{% url 'voterDashboard' %}"> &#8592; Back to Dashboard</a>
+            <hr>
+            
+            <hr>
+            <img class="image_pic" src="{{request.user.profile_pic.url}}" >
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card card-body">
+            <div class="card-header">
+                 <i class="fa fa-align-justify"></i>User Information
+            </div>
+        <div class="card-body">
+           <tbody>
+                <tr>
+                <td>First_Name: {{user.first_name}}</td>
+                <br>
+                <td>Last_Name: {{ user.last_name }}</td>
+                <br>
+                <td>Registartion_Number: {{user.voter.Registration_Number}}</td>
+                <br>
+                <td>Email:{{user.email|urlize}}<td>
+                <br>
+                </tr>
+            </tbody>
+            <tbody>
+                <br>
+              <tr>
+                <div class="card-header">
+                    <i class="fa fa-align-justify"></i>LOGIN ACTIVITY
+                </div>
+                <br>
+                <td>DATE JIONED: {{user.date_joined}}</td>
+                <br><br>
+                <td>LAST LOGIN: {{user.last_login}}</td>
+                <br><br>
+                {% if request.user == user%}
+                  <a href="#" class="btn btn-primary">Edit</a>
+                {% endif %}
+             </tr>
+            </tbody>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

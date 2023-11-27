@@ -1,0 +1,14 @@
+/*==============================
+=>    Users ProfilePicture
+================================*/
+.image_pic{
+  max-width: 200px;
+  max-height:200px;
+  margin: 0 auto;
+  border-radius: 50%; 
+ }
+
+ /*==============================
+ =>   End of Profile_pictures User
+================================*/
+ 

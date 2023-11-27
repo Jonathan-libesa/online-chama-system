@@ -42,10 +42,14 @@ class CashForm(FormSettings):
 class ExpensesForm(FormSettings):
     class Meta:
         model = expenses
-        fields = ['name', 'description', 'amount',]
+        fields = ['name', 'description', 'amount']
 
 
 
+class FineForm(FormSettings):
+    class Meta:
+        model = fine
+        fields = ['Full_Name', 'reason', 'amount']
 #class CandidateForm(FormSettings):
    # class Meta:
         #model = Candidate

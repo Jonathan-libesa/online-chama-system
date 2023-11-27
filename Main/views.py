@@ -236,6 +236,25 @@ def expense_view(request, pk):
     # Get all expenses related to the group
     group_expenses = expenses.objects.filter(groups=groups)
 
+    if request.method == 'POST':
+        form = ExpensesForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            #contribution.groups.set([groups])
+            #contribution.groups= Group.objects.get(groups=groups)
+            contribution.save()
+             # Make sure to save the instance before adding the group
+            form.save_m2m()  
+
+            contribution.groups.set([groups]) 
+            messages.success(request, "Group expense added successfully")
+            return redirect( 'group_expenses',pk=pk)
+        else:
+            messages.error(request, "Form errors")
+           
+    else:
+        form =ExpensesForm()
+
     # Calculate the total sum of expenses
     total_expenses = group_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
@@ -243,8 +262,90 @@ def expense_view(request, pk):
         'groups': groups,
         'total_expenses': total_expenses,
         'group_expenses':group_expenses,
+        'contribution_form': form,
        
 
     }
     return render(request, "loan/expenses.html", context)
+
+
+@login_required(login_url='account_login')
+def view_approved_loan(request, pk):
+    groups = get_object_or_404(Group, id=pk)
+    members = Members.objects.filter(groups=groups)  # Filter members by the specific group
+
+
+    # Get total approved loans for the group
+    total_approved_loans = loan.objects.filter(groups=groups, loan_status=1).count()
+    approved_loans = loan.objects.filter(groups=groups, loan_status=1)
+
+    context = {
+        'groups': groups,
+        'total_approved_loans': total_approved_loans,
+        'approved_loans': approved_loans,
+
+    }
+
+    return render(request, "loan/loan_approved.html", context)
+
+
+
+
+
+@login_required(login_url='account_login')
+def view_pending_loan(request, pk):
+    groups = get_object_or_404(Group, id=pk)
+    members = Members.objects.filter(groups=groups)  # Filter members by the specific group
+
+    pending_loans = loan.objects.filter(groups=groups, loan_status=0)
+       # Get total pending loans for the group
+    total_pending_loans = loan.objects.filter(groups=groups, loan_status=0).count()
+
+    context = {
+        'groups': groups,
+        'total_pending_loans': total_pending_loans,
+        'pending_loans': pending_loans,
+
+    }
+
+    return render(request, "loan/loan_pending.html", context)
+
+
+
+@login_required(login_url='account_login')
+def create_view_fines(request, pk):
+    groups = get_object_or_404(Group, id=pk)
+    members = Members.objects.filter(groups=groups)  # Filter members by the specific group
+    fines = fine.objects.filter(groups=groups)
+
+    if request.method == 'POST':
+        form = FineForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            #contribution.groups.set([groups])
+            #contribution.groups= Group.objects.get(groups=groups)
+            contribution.save()
+             # Make sure to save the instance before adding the group
+            form.save_m2m()  
+
+            contribution.groups.set([groups]) 
+            messages.success(request, "Group Fine added successfully")
+            return redirect( 'group_fines',pk=pk)
+        else:
+            messages.error(request, "Form errors")
+           
+    else:
+        form =FineForm()
+
+    total_fines = fines.aggregate(Sum('amount'))['amount__sum'] or 0
+    context = {
+        'groups': groups,
+        'fines':fines,
+        'contribution_form': form,
+        'total_fines':total_fines,
+       
+
+    }
+    return render(request, "loan/fine.html", context)
+
 

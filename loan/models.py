@@ -51,3 +51,14 @@ class loan(models.Model):
 	def __str__(self):
 		return self.applicant_name
  
+
+
+class fine(models.Model):
+	Full_Name=models.CharField(max_length=255)
+	reason=models.CharField(max_length=255)
+	amount=models.IntegerField(null=False)
+	groups=models.ManyToManyField(Group, related_name='fine', blank=True)
+
+
+	def __str__(self):
+		return self.Name

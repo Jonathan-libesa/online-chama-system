@@ -12,6 +12,10 @@ urlpatterns = [
     path('group_contributions/<int:pk>/', views.group_contributions, name='group_contributions'),
     path('group_cashcollected/<int:pk>/', views.cash_collected, name='cash_collected'),
     path('group_expenses/<int:pk>/',views. expense_view, name='group_expenses'),
+    path('group/<int:pk>/approved-loans/', views.view_approved_loan, name='view_approved_loans'),
+    path('group/<int:pk>/pending-loans/', views.view_pending_loan, name='view_pending_loans'),
+
+    path('group/<int:pk>/fines/',views.create_view_fines, name='group_fines'),
     #path('remove_member/<int:member_id>/', views.remove_member, name='remove_member'),
 
 ]

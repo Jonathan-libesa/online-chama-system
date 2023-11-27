@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Contribution_list
+Pendings_loans
 {% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -13,29 +13,26 @@ Contribution_list
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header with-border">
-          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat">
-            <i class="fa fa-plus"></i> Add Contributions
+            <p>Pending loans<p>
           </a>
         </div>
         <div class="box-body">
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
-              <th>Firstname</th>
-              <th>Lastname</th>
-              <th>Email</th>
-              <th>Category</th>
-              <th>Total amount</th>
+              <th>Full Name </th>
+              <th>Period</th>
+              <th>Borrowed amount</th>
+              <th>Status</th>
             </thead>
             <tbody>
-              {% for contribution in member_contributions %}
+              {% for contribution in pending_loans %}
               <tr>
-                <td>{{ contribution.member.user.first_name }}</td>
-                <td>{{ contribution.member.user.last_name }}</td>
-                <td>{{ contribution.member.user.email }}</td>
-                <td>{{ contribution.categories }}</td>
-                <td>{{ contribution.total_contribution }} Ksh</td>
+                <td>{{ contribution.members.user.first_name }}  {{ contribution.members.user.last_name }}</td>
+                <td>{{ contribution.payment_period}}</td>
+                <td>{{ contribution.amount }}Ksh</td>
+                <td>{{contribution.get_loan_status_display}}</td>
               </tr>
-              {% endfor %}
+            {% endfor %}
             </tbody>
           </table>
         </div>
@@ -54,10 +51,10 @@ Contribution_list
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title"><b>Add Amount</b></h4>
+        <h4 class="modal-title"><b>Add Cash Collected</b></h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal" method="POST" autocomplete="off">
+        <form class="form-horizontal" method="POST"  action="{% url 'group_expenses' groups.id %}">
           {% csrf_token %}
           <div class="modal-body">
             {% for field in contribution_form %}
@@ -72,10 +69,7 @@ Contribution_list
             <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
               <i class="fa fa-close"></i> Close
             </button>
-            <div class="mb-8">
-              <!-- Use a regular button for form submission -->
-               <button type="submit" class="btn btn-primary">PROCEED TO BILLING</button>
-            </div>
+            <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Save</button>
           </div>
         </form>
       </div>

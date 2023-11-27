@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Members_List
+Expenses
 {% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -53,7 +53,7 @@ Members_List
         <h4 class="modal-title"><b>Add Cash Collected</b></h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal" method="POST"  action="{% url 'cash_collected' groups.id %}">
+        <form class="form-horizontal" method="POST"  action="{% url 'group_expenses' groups.id %}">
           {% csrf_token %}
           <div class="modal-body">
             {% for field in contribution_form %}

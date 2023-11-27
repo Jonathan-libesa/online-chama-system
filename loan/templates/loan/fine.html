@@ -1,0 +1,129 @@
+{% extends 'root.html' %}
+{% block title%}
+Fine
+{% endblock %}
+{% block content %}
+<section class="content">
+  <div class="row">
+<div class="col-xs-12">
+<div class="box">
+<div class="box-header with-border">
+  {% if request.user == groups.Chairperson %}
+  <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
+          class="fa fa-plus"></i> Add Fine</a>
+  {% endif %}
+</div>
+<div class="box-body">
+  <table id="example1" class="table table-bordered table-hover table-striped">
+    <thead style="background-color: #222D32; color:white;">
+          <th>FULL Name</th>
+          <th>Reason</th>
+          <th>Amount</th>
+      </thead>
+      <tbody>
+      
+    
+    {% for member in fines %} 
+    <tr>
+      <td>{{ member.Full_Name }}</td>
+      <td>{{ member.reason }}</td>
+      <td>{{member.amount}} Ksh</td>
+    </tr>
+    {% endfor %}      
+
+   </tbody>
+  </table>
+   <p style="font-size: 20px; margin-top: 20px;text-align: center;">Total Fines: {{ total_fines }} Ksh</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="addnew">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Add Fine</b></h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" method="POST" action="{% url 'group_fines' groups.id %}">
+              {% csrf_token %}
+
+             
+              <div class="modal-body">
+                  {% for field in  contribution_form  %}
+                  <div class="form-group has-feedback">
+                      <span class="text-danger">{{field.errors}}</span>
+                      {{field.label_tag}}
+                      {{field}}
+                  </div>
+                  {% endfor %}
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Save</button>
+          </div></form></div></div></div></div>
+
+<!-- Delete -->
+<div class="modal fade" id="delete">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Removing...</b></h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="">
+
+            <input type="hidden" class="id" name="id" value="{{ member.id }}">
+              {% csrf_token %}
+              <div class="text-center">
+                  <p>Remove member</p>
+                  <h2 class="bold fullname"></h2>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class="btn btn-danger btn-flat" name="delete"><i class="fa fa-trash"></i> Delete</button>
+            </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock modal %}
+
+
+
+{% block custom_js %}
+  
+<script>
+  $(function() {
+      $(document).on('click', '.edit', function(e) {
+          e.preventDefault();
+          $('#edit').modal('show');
+          var id = $(this).data('id');
+          getRow(id);
+      });
+
+      $(document).on('click', '.delete', function(e) {
+          e.preventDefault();
+          $('#delete').modal('show');
+          var id = $(this).data('id');
+          getRow(id);
+      });
+
+
+  });
+  </script>
+{% endblock custom_js %}
+  

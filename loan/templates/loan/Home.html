@@ -13,7 +13,7 @@
               <p>Total Balance</p>
             </div>
             <div class="icon">
-              <i class="fa fa-tasks"></i>
+              <i class="fa fa-balance-scale"></i>
             </div>
             <a href="" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
@@ -21,7 +21,7 @@
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-green">
+          <div class="small-box bg-yellow">
             <div class="inner">
               <h3>{{ total_cash_collected }} Ksh</h3>          
               <p>Cash At Hand </p>
@@ -35,7 +35,7 @@
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-blue">
+          <div class="small-box bg-purple">
             <div class="inner">
               <h3>{{total_members}}</h3>             
               <p>Total Members</p>
@@ -57,7 +57,7 @@
               <p>Total contribution</p>
             </div>
             <div class="icon">
-              <i class="fa fa-edit"></i>
+              <i class="fa fa-money"></i>
             </div>
             <a href="{% url 'group_contributions' groups.id %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
@@ -73,15 +73,15 @@
         <!-- ./col -->
         <div class="col-lg-4 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-green">
+          <div class="small-box bg-red">
             <div class="inner">
               <h3>{{ total_pending_loans }}</h3>          
               <p>Total Pending Loans</p>
             </div>
             <div class="icon">
-              <i class="fa fa-black-tie"></i>
+              <i class="fa fa-exclamation-triangle"></i>
             </div>
-            <a href="" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{% url 'view_pending_loans' groups.id %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -93,7 +93,7 @@
               <p>Total Expenses</p>
             </div>
             <div class="icon">
-              <i class="fa fa-users"></i>
+              <i class="fa fa-money"></i>
             </div>
             <a href="{% url 'group_expenses' groups.id %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
@@ -101,15 +101,15 @@
         <!-- ./col -->
         <div class="col-lg-4 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-maroon">
+          <div class="small-box bg-green">
             <div class="inner">
               <h3>{{ total_approved_loans }}</h3>
               <p>Total loan approval</p>
             </div>
             <div class="icon">
-              <i class="fa fa-edit"></i>
+              <i class="fa fa-check"></i>
             </div>
-            <a href="" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{% url 'view_approved_loans' groups.id %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->

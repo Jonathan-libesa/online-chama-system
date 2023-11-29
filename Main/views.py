@@ -17,6 +17,9 @@ from django.contrib.auth import get_user_model
 from.forms import*
 from loan.models import*
 from django.db.models import Sum
+
+#from paypalrestsdk import Payment
+import paypalrestsdk
 user = get_user_model()
 
 
@@ -27,6 +30,9 @@ def index(request):
     if not request.user.is_authenticated:
         return account_login(request)
     context = {}
+
+
+
 
 
 
@@ -92,6 +98,19 @@ def dashboard(request, pk):
 
     # Get total approved loans for the group
     total_approved_loans = Loan.objects.filter(groups=groups, loan_status=1).count()
+    
+    # Get total Paid loans for the group
+    Total_paid_loans =Loan.objects.filter(groups=groups,loan_status=3).count()
+
+    # Get all loans in the group
+    group_loans = Loan.objects.filter(groups=groups)
+
+    # Calculate the sum of all paid amounts and remaining amount for the group
+    total_paid_amount = sum([loan.calculate_total_amount() for loan in group_loans if loan.get_payment_status() == 'Fully Paid'])
+    remaining_amount_to_pay = sum([loan.calculate_remaining_amount() for loan in group_loans if loan.get_payment_status() != 'Fully Paid'])
+ 
+
+
 
     context = {
         'groups': groups,
@@ -102,6 +121,9 @@ def dashboard(request, pk):
         'total_expenses': total_expenses,
         'total_pending_loans': total_pending_loans,
         'total_approved_loans': total_approved_loans,
+        'Total_paid_loans':Total_paid_loans,
+        'total_paid_amount':total_paid_amount,
+        'remaining_amount_to_pay':  remaining_amount_to_pay,
         'members' : members ,
 
     }
@@ -364,56 +386,134 @@ def get_member_loans_and_total_amount(member_id, group_id):
 @login_required(login_url='account_login')
 def apply_loan(request, pk):
     groups = get_object_or_404(Group, id=pk)
-    # Get the currently logged-in member
     member = Members.objects.get(user=request.user, groups=groups)
-    
     # Get specific member's loans and total amount
     member_loans, total_member_amount = get_member_loans_and_total_amount(member_id=member.id, group_id=pk)
 
     # Calculate each member's total loans and total amount to return in the group
     #total_loans, total_amount_to_return = get_member_total_loans_and_amount(member_id=member.id, group_id=pk)
     member_loans , total_amount_to_return = get_member_loans_and_total_amount(member_id=member.id, group_id=pk)
+    
+    # Calculate the total amount of each loan applied by the member
+    total_loan_amounts = {loan.id: loan.calculate_total_amount() for loan in member_loans}
 
+    # Include total amount, remaining amount, and other loan details in the context
+    loan_details = []
+    for loan in member_loans:
+        total_amount_to_return = total_loan_amounts.get(loan.id, 0)
+        remaining_amount = max(0, loan.calculate_remaining_amount())
+        loan_details.append({
+            'loan': loan,
+            'total_amount_to_return': total_amount_to_return,
+            'remaining_amount': remaining_amount,
+            'status_display': loan.get_loan_status_display()
+        })
 
-    # Get specific member's loans and total amount
-    #member_loans, total_member_amount = get_member_loans_and_total_amount(member_id=pk, group_id=pk)
-
+    # Include total amount for each loan in the context
+    #loan_details = [{'loan': loan, 'total_amount_to_return': total_loan_amounts.get(loan.id, 0)} for loan in member_loans]
 
     if request.method == 'POST':
         form = LoanApplicationForm(request.POST)
+        payment_form = PaymentForm(request.POST)
+
         if form.is_valid():
             loan = form.save(commit=False)
             loan.member = Members.objects.get(user=request.user)
             loan.groups = groups
-
-            # Calculate total amount with interest before saving
             total_amount = loan.calculate_total_amount()
             loan.total_amount = total_amount
             loan.save()
             form.save_m2m()
-
             messages.success(request, f'Loan application submitted successfully! Total loan repayment amount: {total_amount} Ksh')
             return redirect('apply_loans', pk=pk)
+
+        elif payment_form.is_valid():
+            amount_paid = payment_form.cleaned_data['amount_paid']
+            loan_id = request.POST.get('loan_id')
+            loan = get_object_or_404(Loan, id=loan_id)
+
+          # Check if the loan status is approved and partially paid before allowing payment
+            if loan.loan_status != 1 and loan.loan_status != 4:
+                messages.error(request, 'You can only pay approved and partially paid loans!')
+                return redirect('apply_loans', pk=pk)
+
+
+
+            # Check if the payment exceeds the total loan amount
+            if amount_paid > loan.calculate_total_amount():
+                messages.error(request, 'You are paying more than your total loan amount!')
+                return redirect('apply_loans', pk=pk)
+
+            # Update the remaining amount based on the payment
+            remaining_amount = max(0, loan.calculate_remaining_amount())
+
+            
+
+            # Check if the loan is fully paid or partially paid
+            if remaining_amount <= 0:
+                loan.loan_status = 4  # Fully paid
+                loan.is_fully_paid = True
+            else:
+                loan.loan_status = 3  # Partially paid
+                loan.is_fully_paid = False
+
+
+            # Check if the loan is fully paid
+            if sum(payment.amount_paid for payment in Payment.objects.filter(loan=loan)) + amount_paid >= loan.calculate_total_amount():
+
+                loan.loan_status = 3 
+                loan.is_fully_paid = True
+
+            else:
+                loan.is_fully_paid = False
+                loan.loan_status = 4
+           # Save the loan status
+          
+            loan.save()
+
+            # Record the payment
+            Payment.objects.create(loan=loan, amount_paid=amount_paid)
+            
+
+            #loan.pay_loan(amount_paid)
+            messages.success(request, f'Loan payment of {amount_paid} Ksh successfully processed!')
+
+            # If the loan is fully paid, prevent further payments
+            if loan.is_fully_paid:
+                messages.warning(request, 'This loan is fully paid. No further payments allowed.')
+
+            return redirect('apply_loans', pk=pk)
+
     else:
         form = LoanApplicationForm(initial={'groups': groups})
-
-    # Calculate the total amount borrowed by the member
-    #total_borrowed_amount = sum([loan.calculate_total_amount() for loan in loans if loan.calculate_total_amount() is not None])
-
-     # Initialize the total amount to be paid for the group
-    #total_amount_for_group = sum([loan.calculate_total_amount() for loan in loans if loan.calculate_total_amount() is not None])
+        payment_form = PaymentForm()
 
     context = {
         'groups': groups,
         'member': member,
         'form': form,
-        #'total_borrowed_amount': total_borrowed_amount,
-        #'total_amount_for_group': total_amount_for_group,
         'member_loans': member_loans,
         'total_amount_to_return': total_amount_to_return,
+        'payment_form': payment_form,
+        ' total_loan_amounts ': total_loan_amounts, 
+        'loan_details': loan_details,
     }
 
     return render(request, "loan/apply_loan.html", context)
+
+
+
+
+
+def process_payment(request,loan_id):
+    # Process payment and update loan status here
+    loan_id = request.POST.get('loan_id')
+    payment_id = request.POST.get('payment_id')
+    amount_paid = request.POST.get('amount_paid')
+
+    # Perform necessary actions (e.g., update loan status, record payment in the database)
+
+    return JsonResponse({'status': 'success'})
 
 
 
@@ -476,3 +576,29 @@ def create_view_fines(request, pk):
     return render(request, "loan/fine.html", context)
 
 
+
+
+
+
+@login_required(login_url='account_login')
+def view_Paid_loan(request, pk):
+    groups = get_object_or_404(Group, id=pk)
+    members = Members.objects.filter(groups=groups)  # Filter members by the specific group
+
+
+    # Get total approved loans for the group
+    Total_paid_loans = Loan.objects.filter(groups=groups, loan_status=3).count()
+    Paid_loans = Loan.objects.filter(groups=groups, loan_status=3)
+
+    total_amount_to_return = sum([loan.calculate_total_amount() for loan in Paid_loans])
+
+    context = {
+        'groups': groups,
+        'Total_paid_loans': Total_paid_loans,
+        'Paid_loans': Paid_loans,
+        'members' : members ,
+        'total_amount_to_return': total_amount_to_return,
+
+    }
+
+    return render(request, "loan/paid_loan.html", context)

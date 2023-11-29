@@ -17,7 +17,15 @@ urlpatterns = [
 
     path('group/<int:pk>/fines/',views.create_view_fines, name='group_fines'),
 
-    path('group/<int:pk>/apply-for-loans/', views.apply_loan, name='apply_loans')
+    path('group/<int:pk>/apply-for-loans/', views.apply_loan, name='apply_loans'),
+    #path('process_payment/<int:loan_id>/', views.process_payment, name='process_payment'),
+    #path('pay_loan/<int:loan_id>/',views.pay_loan, name='pay_loan'),
+
+
+    path('group_paid_loan/<int:pk>/', views.view_Paid_loan, name='loan_paid'),
+    
+
     #path('remove_member/<int:member_id>/', views.remove_member, name='remove_member'),
 
 ]
+

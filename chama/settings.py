@@ -138,6 +138,11 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Paypal payment intergration
+
+PAYPAL_CLIENT_ID = 'AWDOpVQ_oQT07_KR4nR1MWLBS9GBSHe6yhygMbaLfUEtGeLAfE5gtd2myTNlJwAWUs7JEkCYCkoSnHc5'
+PAYPAL_SECRET = 'EMxQ4WqsQKpNgg9WW0ZjeOiiYLFzQYz9y3gWuzRnD0ohcN1C-qvx2SL1o2YG4eGstgX61bMPdm-eelOh'
+PAYPAL_MODE = 'sandbox'  # Change to 'live' for production
 
 
 

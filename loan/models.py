@@ -8,6 +8,7 @@ STATUS = (
     (1,"Approved"),
     (2,"Rejected"),
     (3,"Paid"),
+    (4,"Partially Paid")
 
  )
 
@@ -43,6 +44,11 @@ class Loan(models.Model):
     duration_months = models.IntegerField()
     loan_status = models.IntegerField(choices=STATUS, default=0)
     date_applied = models.DateTimeField(auto_now_add=True)
+    is_fully_paid = models.BooleanField(default=False)  # New field
+
+    class Meta:
+        ordering=['-date_applied']
+
 
     def calculate_total_amount(self):
         if self.groups is None or self.groups.loan_interest_rate is None:
@@ -93,14 +99,22 @@ class Loan(models.Model):
             return "Partially Paid"
         else:
             return "Not Paid"
+
+      
     def pay_loan(self, amount_paid):
 
-        # Create a new payment record
+
         payment = Payment(loan=self, amount_paid=amount_paid)
         payment.save()
 
         # Update the loan status based on the payment
         payment.update_loan_status()
+
+        # Check if the loan is fully paid after the payment
+        remaining_amount = self.calculate_remaining_amount()
+        if remaining_amount <= 0:
+            self.is_fully_paid = True
+            self.save()
 
     #def __str__(self):
         #return f"Loan for {self.member.user.username} in {self.groups.Name}"
@@ -110,12 +124,12 @@ class Loan(models.Model):
         #interest_amount = (self.amount * self.group.interest_rate * self.duration_months) / 100
         #total_amount = self.amount + interest_amount
         #return total_amount
-
-   
 class Payment(models.Model):
-    loan = models.ForeignKey(Loan, null=True,on_delete=models.SET_NULL)
+    loan = models.ForeignKey(Loan, null=True, on_delete=models.SET_NULL)
     payment_date = models.DateTimeField(auto_now_add=True)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+
+    objects = models.Manager()  # Add this line if not already present
 
     def __str__(self):
         return f"Payment of {self.amount_paid} made on {self.payment_date} for loan {self.loan}"
@@ -124,10 +138,8 @@ class Payment(models.Model):
         loan = self.loan
         loan_status = loan.loan_status
 
-        # Calculate the remaining loan amount
         remaining_amount = loan.calculate_total_amount() - self.amount_paid
 
-        # Update the loan status based on the remaining amount
         if remaining_amount <= 0:
             loan_status = 2  # Fully paid
         elif remaining_amount < loan.amount:
@@ -137,6 +149,9 @@ class Payment(models.Model):
 
         loan.loan_status = loan_status
         loan.save()
+
+   
+
 
 
 

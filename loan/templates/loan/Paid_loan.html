@@ -13,52 +13,29 @@ Apply-for-loan
   <div class="row">
     <div class="col-xs-12">
       <div class="box">
-        <div class="box-header with-border">
-          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat">
-            <i class="fa fa-plus"></i> Apply for loan
-          </a>
-        </div>
+        {% if request.user == groups.Chairperson %}
+          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
+          class="fa fa-plus"></i> Apply loan</a>
+        {% endif %}
         <div class="box-body">
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
-              <th>Date of application</th>
               <th>Full Name </th>
               <th>Period</th>
               <th>interest rate/PM</th>
               <th>Borrowed amount</th>
               <th>Status</th>
-              <th>Total to return amount</th>
-              <th>Remaining amount</th>
-              <th>Pay Loan</th>
+              <th>Total amount</th>
             </thead>
             <tbody>
-              {% for contribution in loan_details %}
+              {% for contribution in Paid_loans %}
                 <tr>
-                  <td>{{contribution.loan.date_applied}}</td>
-                  <td>{{ contribution.loan.member.user.first_name }}  {{ contribution.loan.member.user.last_name }}</td>
-                  <td>{{ contribution.loan.duration_months}}</td>
-                  <td>{{ contribution.loan.groups.loan_interest_rate}}%</td>
-                  <td>{{ contribution.loan.amount }}Ksh</td>
-                  <td>
-                    {% if contribution.loan.is_fully_paid %}
-                        Paid
-                    {% else %}        
-                      {{ contribution.loan.get_loan_status_display }}
-                    {% endif %}
-                  </td>
-                  <td>{{ contribution.total_amount_to_return }}Ksh</td>
-                  <td> {{ contribution.remaining_amount }} Ksh</td>
-                    <td>
-                    {% if not contribution.loan.is_fully_paid %}
-                      <button class="btn btn-primary btn-sm btn-flat" data-toggle="modal" data-target="#payLoanModal{{ contribution.loan.id }}">
-                        Pay Loan
-                      </button>
-                    {% else %}
-                      <button class="btn btn-secondary btn-sm btn-flat" disabled>
-                        Already Paid
-                      </button>
-                    {% endif %}
-                    </td>
+                  <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
+                  <td>{{ contribution.duration_months}}</td>
+                  <td>{{ contribution.groups.loan_interest_rate}}%</td>
+                  <td>{{ contribution.amount }}Ksh</td>
+                  <td>{{ contribution.get_loan_status_display }}</td>
+                  <td>{{total_amount_to_return }}Ksh</td>
                 </tr>
               {% endfor %}
             </tbody>

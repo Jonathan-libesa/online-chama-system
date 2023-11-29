@@ -70,6 +70,10 @@ class UserSelectionForm(forms.Form):
         self.fields['users'].queryset = User.objects.all()
 
 
+class PaymentForm(FormSettings):
+    class Meta:
+        model = Payment
+        fields = ['amount_paid']
 
 
 #class ApplyForm(FormSettings):

@@ -1,0 +1,40 @@
+{% extends 'Main/index.html' %}
+{% load static %}
+
+{% block title %}
+Pay Loan
+{% endblock %}
+
+
+{% block content %}
+<section class="content">
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h4 class="modal-title"><b>Pay Loan</b></h4>
+                </div>
+                <div class="box-body">
+                    <form id="paypal-form" method="POST" action="{% url 'pay_loan' loan.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {% for field in payment_form %}
+                            <div class="form-group has-feedback">
+                                <span class="text-danger">{{field.errors}}</span>
+                                {{field.label_tag}}
+                                {{field}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                          <button type="submit">Pay with PayPal</button>
+
+                        <!-- Remove the button inside the form, as PayPal will handle the submission -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+

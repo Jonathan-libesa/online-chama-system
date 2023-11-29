@@ -17,11 +17,11 @@
       <li class=""><a href="{% url 'dashboard' groups.pk %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
       <li class=""><a href="{% url 'group_fines' groups.id %}"><span class="fa fa-font"></span> <span>Fine</span></a>
       </li>
-      <li class=""><a href=""><span class="glyphicon glyphicon-lock"></span> <span>loan Summary</span></a></li>
+      <li class=""><a href="{% url 'add_group'  %}"><span class="glyphicon glyphicon-lock"></span> <span>View Groups</span></a></li>
       <li class="header">Transaction Reports</li>
       <li class=""><a href=""><i class="fa fa-users"></i> <span>Deposit</span></a></li>
       <li class=""><a href=""><i class="fa fa-tasks"></i> <span>With</span></a></li>
-      <li class=""><a href=""><i class="fa fa-black-tie"></i> <span> Apply for Loans</span></a></li>
+      <li class=""><a href="{% url 'apply_loans' groups.id %}"><i class="fa fa-black-tie"></i> <span> Apply for Loans</span></a></li>
 
       <li class="header">EXIT</li>
       <li class=""><a href="{% url 'account_logout' %}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>     

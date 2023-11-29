@@ -34,7 +34,7 @@
           </li>
           <li class="user-footer">
             <div class="pull-left">
-              <a href="" class="btn btn-default btn-flat"> Account setting</a>
+              <a href="{% url 'user_profile' groups.pk %}" class="btn btn-default btn-flat"> Account setting</a>
             </div>
             <div class="pull-right">
               <a href="{% url 'account_logout' %}" class="btn btn-default btn-flat">Sign out</a>

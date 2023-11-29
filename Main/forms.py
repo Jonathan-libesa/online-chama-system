@@ -4,7 +4,9 @@ from Users.forms import FormSettings
 from Users.models import*
 from django.contrib.auth.forms import UserCreationForm
 from loan.models import*
-
+from Users.models import*
+from django.contrib.auth import get_user_model
+user = get_user_model()
 class userForm(FormSettings):
     class Meta:
         model = User
@@ -14,7 +16,7 @@ class userForm(FormSettings):
 class GroupForm(FormSettings):
     class Meta:
         model =  Group
-        fields = ['Name','grouptype']
+        fields = ['Name','grouptype','loan_interest_rate']
 
 
 class MemberForm(FormSettings):
@@ -50,10 +52,23 @@ class FineForm(FormSettings):
     class Meta:
         model = fine
         fields = ['Full_Name', 'reason', 'amount']
-#class CandidateForm(FormSettings):
-   # class Meta:
-        #model = Candidate
-        #fields = [ 'User', 'position', 'photo','status',]
+
+
+
+class LoanApplicationForm(FormSettings):    
+    class Meta:
+        model = Loan
+        fields = ['employment_terms', 'security_details', 'amount', 'duration_months']
+
+
+class UserSelectionForm(forms.Form):
+    search_user = forms.CharField(label='Search User', required=False)
+    users = forms.ModelMultipleChoiceField(queryset=User.objects.none(), widget=forms.CheckboxSelectMultiple)
+
+    def __init__(self, *args, **kwargs):
+        super(UserSelectionForm, self).__init__(*args, **kwargs)
+        self.fields['users'].queryset = User.objects.all()
+
 
 
 

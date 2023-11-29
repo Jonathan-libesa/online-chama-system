@@ -5,5 +5,8 @@ from .models import *
 
 
 admin.site.register(expenses)
-admin.site.register(loan)
+admin.site.register(Loan)
+admin.site.register(Payment)
 admin.site.register(Loantype)
+
+

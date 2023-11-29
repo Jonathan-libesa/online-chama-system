@@ -16,6 +16,8 @@ urlpatterns = [
     path('group/<int:pk>/pending-loans/', views.view_pending_loan, name='view_pending_loans'),
 
     path('group/<int:pk>/fines/',views.create_view_fines, name='group_fines'),
+
+    path('group/<int:pk>/apply-for-loans/', views.apply_loan, name='apply_loans')
     #path('remove_member/<int:member_id>/', views.remove_member, name='remove_member'),
 
 ]

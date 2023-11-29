@@ -19,16 +19,19 @@ Pendings_loans
         <div class="box-body">
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
+              <th>Date of application</th>
               <th>Full Name </th>
               <th>Period</th>
               <th>Borrowed amount</th>
               <th>Status</th>
+              
             </thead>
             <tbody>
               {% for contribution in pending_loans %}
               <tr>
-                <td>{{ contribution.members.user.first_name }}  {{ contribution.members.user.last_name }}</td>
-                <td>{{ contribution.payment_period}}</td>
+                <td>{{contribution.date_applied}}</td>
+                <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
+                <td>{{ contribution.duration_months}}</td>
                 <td>{{ contribution.amount }}Ksh</td>
                 <td>{{contribution.get_loan_status_display}}</td>
               </tr>
@@ -77,4 +80,5 @@ Pendings_loans
   </div>
 </div>
 {% endblock modal %}
+
 

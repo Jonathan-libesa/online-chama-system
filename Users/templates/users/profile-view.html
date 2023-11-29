@@ -11,7 +11,7 @@
 <div class="row ">
     <div class="col-md-4">
         <div class="card card-body">
-            <a class="btn btn-warning" href="{% url 'voterDashboard' %}"> &#8592; Back to Dashboard</a>
+            <a class="btn btn-warning" href="{% url 'dashboard' groups.pk %}"> &#8592; Back to Dashboard</a>
             <hr>
             
             <hr>
@@ -30,7 +30,7 @@
                 <br>
                 <td>Last_Name: {{ user.last_name }}</td>
                 <br>
-                <td>Registartion_Number: {{user.voter.Registration_Number}}</td>
+                <td>Username: {{user.username}}</td>
                 <br>
                 <td>Email:{{user.email|urlize}}<td>
                 <br>
@@ -48,7 +48,15 @@
                 <td>LAST LOGIN: {{user.last_login}}</td>
                 <br><br>
                 {% if request.user == user%}
-                  <a href="#" class="btn btn-primary">Edit</a>
+                  <a href="#" class="btn btn-primary btn-lg btn-flat ">Edit</a>
+                {% endif %}
+                <br>
+                 {% if request.user == groups.Chairperson %}
+                <div class="box-header with-border">
+                  <a href="" class="btn btn-success btn-lg btn-flat">
+                    <i class="fa fa-cog"></i> Group setting
+                  </a>
+                </div>
                 {% endif %}
              </tr>
             </tbody>

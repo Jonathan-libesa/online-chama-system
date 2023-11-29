@@ -88,10 +88,10 @@ def dashboard(request, pk):
     total_expenses = group_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
     # Get total pending loans for the group
-    total_pending_loans = loan.objects.filter(groups=groups, loan_status=0).count()
+    total_pending_loans = Loan.objects.filter(groups=groups, loan_status=0).count()
 
     # Get total approved loans for the group
-    total_approved_loans = loan.objects.filter(groups=groups, loan_status=1).count()
+    total_approved_loans = Loan.objects.filter(groups=groups, loan_status=1).count()
 
     context = {
         'groups': groups,
@@ -102,10 +102,56 @@ def dashboard(request, pk):
         'total_expenses': total_expenses,
         'total_pending_loans': total_pending_loans,
         'total_approved_loans': total_approved_loans,
+        'members' : members ,
 
     }
 
     return render(request, "loan/Home.html", context)
+
+
+@login_required(login_url='account_login')
+def iew_members(request, group_id):
+    groups = get_object_or_404(Group, id=group_id)
+    members = Members.objects.filter(groups=groups)
+
+    if request.method == 'POST':
+        member_form = MemberForm(request.POST)
+        user_selection_form = UserSelectionForm(request.POST)
+
+        if user_selection_form.is_valid():
+            # Get the selected users
+            selected_users = user_selection_form.cleaned_data['users']
+
+            # If there are selected users, add them to the group
+            if selected_users:
+
+                Members.objects.create(user=user, groups=groups)
+                #groups.members.add(member)
+
+                return redirect('view_members', group_id=groups.id)
+
+        # If no existing users were selected, check if the MemberForm is valid
+        if member_form.is_valid():
+            # Save the member information
+            member = member_form.save(commit=False)
+
+            # Add the member's user to the group
+            groups.members.add(member.user)
+
+            return redirect('view_members', group_id=groups.id)
+    else:
+        member_form = MemberForm()
+        user_selection_form = UserSelectionForm()
+
+    context = {
+        'groups': groups,
+        'member_form': member_form,
+        'user_selection_form': user_selection_form,
+        'members': members,
+    }
+    return render(request, "loan/members.html", context)
+
+
 
 
 
@@ -130,7 +176,7 @@ def view_members(request, group_id):
             # Add the member to the group
             groups.members.add(member)
 
-            return redirect('view_members', group_id=group.id)
+            return redirect('view_members', group_id=groups.id)
     else:
         member_form = MemberForm()
         user_form = userForm()
@@ -175,6 +221,7 @@ def group_contributions(request, pk):
         'groups': groups,
         'member_contributions': member_contributions,
         'contribution_form': form,
+        'members' : members ,
     }
 
     return render(request, "loan/Contribution.html", context)
@@ -221,6 +268,7 @@ def cash_collected(request, pk):
         'members': member_totals,  # Pass the member-wise totals to the template
         'total_cash': total_cash,
         'contribution_form': form,
+        'members' : members ,
     }
 
     return render(request, "loan/cash_collected.html", context)
@@ -263,6 +311,7 @@ def expense_view(request, pk):
         'total_expenses': total_expenses,
         'group_expenses':group_expenses,
         'contribution_form': form,
+        'members' : members ,
        
 
     }
@@ -276,19 +325,95 @@ def view_approved_loan(request, pk):
 
 
     # Get total approved loans for the group
-    total_approved_loans = loan.objects.filter(groups=groups, loan_status=1).count()
-    approved_loans = loan.objects.filter(groups=groups, loan_status=1)
+    total_approved_loans = Loan.objects.filter(groups=groups, loan_status=1).count()
+    approved_loans = Loan.objects.filter(groups=groups, loan_status=1)
 
     context = {
         'groups': groups,
         'total_approved_loans': total_approved_loans,
         'approved_loans': approved_loans,
+        'members' : members ,
 
     }
 
     return render(request, "loan/loan_approved.html", context)
 
 
+def get_member_loans_and_total_amount(member_id, group_id):
+    # Get the group and member
+    groups = get_object_or_404(Group, id=group_id)
+    member = get_object_or_404(Members, id=member_id, groups=groups)
+
+
+    # Get all loans in the group for the specific member
+    #loans = Loan.objects.filter(groups=groups, member=member)
+    member_loans = Loan.objects.filter(member__id=member_id, groups__id=group_id)
+
+    # Calculate the total amount borrowed by the member
+    #total_loans = member_loans.count()
+    total_amount_to_return = sum([loan.calculate_total_amount() for loan in member_loans])
+    #total_amount_to_return = member_loans.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    #total_borrowed_amount = sum([loan.calculate_total_amount() for loan in loans if loan.calculate_total_amount() is not None])
+
+    # Return the loans and total amount
+    return  member_loans , total_amount_to_return
+
+   
+
+
+@login_required(login_url='account_login')
+def apply_loan(request, pk):
+    groups = get_object_or_404(Group, id=pk)
+    # Get the currently logged-in member
+    member = Members.objects.get(user=request.user, groups=groups)
+    
+    # Get specific member's loans and total amount
+    member_loans, total_member_amount = get_member_loans_and_total_amount(member_id=member.id, group_id=pk)
+
+    # Calculate each member's total loans and total amount to return in the group
+    #total_loans, total_amount_to_return = get_member_total_loans_and_amount(member_id=member.id, group_id=pk)
+    member_loans , total_amount_to_return = get_member_loans_and_total_amount(member_id=member.id, group_id=pk)
+
+
+    # Get specific member's loans and total amount
+    #member_loans, total_member_amount = get_member_loans_and_total_amount(member_id=pk, group_id=pk)
+
+
+    if request.method == 'POST':
+        form = LoanApplicationForm(request.POST)
+        if form.is_valid():
+            loan = form.save(commit=False)
+            loan.member = Members.objects.get(user=request.user)
+            loan.groups = groups
+
+            # Calculate total amount with interest before saving
+            total_amount = loan.calculate_total_amount()
+            loan.total_amount = total_amount
+            loan.save()
+            form.save_m2m()
+
+            messages.success(request, f'Loan application submitted successfully! Total loan repayment amount: {total_amount} Ksh')
+            return redirect('apply_loans', pk=pk)
+    else:
+        form = LoanApplicationForm(initial={'groups': groups})
+
+    # Calculate the total amount borrowed by the member
+    #total_borrowed_amount = sum([loan.calculate_total_amount() for loan in loans if loan.calculate_total_amount() is not None])
+
+     # Initialize the total amount to be paid for the group
+    #total_amount_for_group = sum([loan.calculate_total_amount() for loan in loans if loan.calculate_total_amount() is not None])
+
+    context = {
+        'groups': groups,
+        'member': member,
+        'form': form,
+        #'total_borrowed_amount': total_borrowed_amount,
+        #'total_amount_for_group': total_amount_for_group,
+        'member_loans': member_loans,
+        'total_amount_to_return': total_amount_to_return,
+    }
+
+    return render(request, "loan/apply_loan.html", context)
 
 
 
@@ -297,14 +422,15 @@ def view_pending_loan(request, pk):
     groups = get_object_or_404(Group, id=pk)
     members = Members.objects.filter(groups=groups)  # Filter members by the specific group
 
-    pending_loans = loan.objects.filter(groups=groups, loan_status=0)
+    pending_loans = Loan.objects.filter(groups=groups, loan_status=0)
        # Get total pending loans for the group
-    total_pending_loans = loan.objects.filter(groups=groups, loan_status=0).count()
+    total_pending_loans = Loan.objects.filter(groups=groups, loan_status=0).count()
 
     context = {
         'groups': groups,
         'total_pending_loans': total_pending_loans,
         'pending_loans': pending_loans,
+        'members' : members ,
 
     }
 
@@ -343,6 +469,7 @@ def create_view_fines(request, pk):
         'fines':fines,
         'contribution_form': form,
         'total_fines':total_fines,
+        'members' : members ,
        
 
     }

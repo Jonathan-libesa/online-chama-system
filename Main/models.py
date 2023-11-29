@@ -24,6 +24,7 @@ class Grouptype(models.Model):
 
 class Group(models.Model):
     Name=models.CharField(max_length=200)
+    loan_interest_rate = models.DecimalField(max_digits=5, decimal_places=2, help_text="Enter the interest rate as a percentage")
     Chairperson=models.ForeignKey(User,on_delete=models.SET_NULL, null=True,blank=True)
     grouptype=models.ForeignKey(Grouptype,on_delete=models.SET_NULL,null=True)
     date_created=models.DateTimeField(auto_now_add=True)
@@ -37,7 +38,7 @@ class Group(models.Model):
 
 
 class Members(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=CASCADE)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group, related_name='members')
     date_created = models.DateTimeField(auto_now_add=True)
 

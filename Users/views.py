@@ -24,6 +24,7 @@ from .utils import generate_token
 from.decorators import auth_user_should_not_access
 from .email_backend import EmailBackend
 from django.db.models import Sum
+from Main.models import*
 # Create your views here.
 
 # To MAKE EASIER FOR EMAILING A USER
@@ -232,3 +233,10 @@ class CompletePasswordReset(View):
             return render(request,'users/new-password.html',context)
 
 
+#User View Profile
+def profile_view_user(request, pk):
+    user = request.user
+    groups = get_object_or_404(Group, id=pk)
+    #groups = user.groups.all()  # Get all groups the user belongs to
+    context = {'user': user, 'groups': groups}
+    return render(request, 'users/profile-view.html', context)

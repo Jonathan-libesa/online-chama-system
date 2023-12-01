@@ -17,14 +17,18 @@ urlpatterns = [
 
     path('group/<int:pk>/fines/',views.create_view_fines, name='group_fines'),
 
-    path('group/<int:pk>/apply-for-loans/', views.apply_loan, name='apply_loans'),
     #path('process_payment/<int:loan_id>/', views.process_payment, name='process_payment'),
     #path('pay_loan/<int:loan_id>/',views.pay_loan, name='pay_loan'),
 
 
     path('group_paid_loan/<int:pk>/', views.view_Paid_loan, name='loan_paid'),
-    
 
+
+    path('group_information/<int:pk>/', views.view_Group_info, name='view_Group'),
+
+    path('group/<int:pk>/Loan-Applications/', views.view_Loan_Applications, name='view_Loan_Applications'),
+    
+    path('process_paypal_payment/', views.process_paypal_payment, name='process_paypal_payment'),
     #path('remove_member/<int:member_id>/', views.remove_member, name='remove_member'),
 
 ]

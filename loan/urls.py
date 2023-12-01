@@ -3,8 +3,10 @@ from.import views
 
 urlpatterns = [
     #path('',views.homeview,name="home"),
-    #path('contact_open_heavens_ministry',views.contact,name="contact_open"),
-    #path('donate_view/',views.donate,name="give"),
-    path('payment/success/',views.payment_success, name='payment_success'),
-    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    path('group/<int:pk>/Paid-Loan-Excel/', views.view_Paid_loan_excel, name='paid_loan_excel'),
+    path('group/<int:pk>/apply-for-loans/', views.apply_loan, name='apply_loans'),
+    path('group/<int:pk>/rejected_loans/', views. view_rejected_loans, name='rejected_loans'),
+    path('generate_excel_loan_details/<int:pk>/', views.generate_excel_loan_details, name='generate_excel_loan_details'),
+    
+    
  ] 

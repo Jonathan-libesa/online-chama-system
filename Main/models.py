@@ -26,6 +26,7 @@ class Group(models.Model):
     Name=models.CharField(max_length=200)
     loan_interest_rate = models.DecimalField(max_digits=5, decimal_places=2, help_text="Enter the interest rate as a percentage")
     Chairperson=models.ForeignKey(User,on_delete=models.SET_NULL, null=True,blank=True)
+    Group_Logo =models.ImageField(default="no_avatar.jpg",null=False,blank=False,upload_to='Group_Logo_picture/')
     grouptype=models.ForeignKey(Grouptype,on_delete=models.SET_NULL,null=True)
     date_created=models.DateTimeField(auto_now_add=True)
 
@@ -72,6 +73,7 @@ class Category(models.Model):
 
 class Contribution(models.Model):
     member=models.ForeignKey(Members,on_delete=models.SET_NULL,null=True)
+    groups = models.ForeignKey(Group, related_name='contribution', null=True, on_delete=models.SET_NULL)
     amount=models.FloatField(null=False,blank=False)
     categories=models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,blank=False)
     date_created=models.DateTimeField(auto_now_add=True)
@@ -84,7 +86,7 @@ class Contribution(models.Model):
 class Cash(models.Model):
 
     member=models.ForeignKey(Members,on_delete=models.SET_NULL,null=True)
-    #Name =models.CharField(max_length=300)
+    groups = models.ForeignKey(Group, related_name='cash', null=True, on_delete=models.SET_NULL)
     amount=models.FloatField(null=False,blank=False)
     categories=models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,blank=False)
     date_created=models.DateTimeField(auto_now_add=True)

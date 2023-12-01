@@ -64,3 +64,10 @@ class UserForm(FormSettings):
         model = User
         fields = ['username','email', 'first_name', 'last_name', 'password', ]
         
+
+
+class EditUserForm(FormSettings):
+    class Meta:
+        model = User
+        fields = ['username','email', 'first_name', 'last_name', 'profile_pic','phone']
+

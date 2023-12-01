@@ -49,9 +49,13 @@ class Loan(models.Model):
     class Meta:
         ordering=['-date_applied']
 
+    #def calculate_total_amount(self):
+    #if self.groups is None or self.groups.loan_interest_rate is None or self.amount is None or self.duration_months is None:
+        #return None 
+
 
     def calculate_total_amount(self):
-        if self.groups is None or self.groups.loan_interest_rate is None:
+        if self.groups is None or self.groups.loan_interest_rate is None or self.amount is None or self.duration_months is None:
             return None  # or any other appropriate value
 
         # Assuming the interest is applied monthly

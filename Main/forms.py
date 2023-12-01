@@ -76,6 +76,14 @@ class PaymentForm(FormSettings):
         fields = ['amount_paid']
 
 
+
+class GroupEditForm(FormSettings):
+    class Meta:
+        model =  Group
+        fields = ['Name','grouptype','loan_interest_rate','Group_Logo']
+
+
+
 #class ApplyForm(FormSettings):
     #class Meta:
         #model = Candidate

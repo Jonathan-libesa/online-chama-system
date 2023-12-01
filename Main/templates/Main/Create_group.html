@@ -15,6 +15,23 @@
         background-color: gray;
 
     }
+    /* Basic button styles */
+    .logout-button {
+      padding: 10px 20px;
+      background-color: #ff6347; /* Change the color to your preference */
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Hover effect */
+    .logout-button:hover {
+      background-color: #ff8c71; /* Change the hover color if needed */
+    }
+
 </style>
     <div class="container ">
          <div class="card">
@@ -26,6 +43,9 @@
                 <a href="#addnew" data-toggle="modal" class="btn btn-primary" style="margin-left: 500px;"><i
                 class="fa fa-plus"></i>Create Group</a>
             </div>
+              <div class="pull-right">
+             <a href="{% url 'account_logout' %}"><button class="logout-button">Logout</button></a>
+              </div>
           </div>
         </div>
     </div>

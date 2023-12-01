@@ -234,9 +234,32 @@ class CompletePasswordReset(View):
 
 
 #User View Profile
-def profile_view_user(request, pk):
+def rofile_view_user(request, pk):
     user = request.user
     groups = get_object_or_404(Group, id=pk)
     #groups = user.groups.all()  # Get all groups the user belongs to
     context = {'user': user, 'groups': groups}
+    return render(request, 'users/profile-view.html', context)
+
+
+
+def profile_view_user(request, pk):
+    #user = get_object_or_404(User, id=pk)
+    user = request.user
+    groups = get_object_or_404(Group, id=pk)
+    #groups = user.groups.all()
+
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('user_profile', pk=pk)
+        else:
+            print(form.errors)
+            messages.error(request, 'There was an error updating your profile. Please correct the errors below.')
+    else:
+        form = EditUserForm(instance=user)
+
+    context = {'user': user, 'groups': groups, 'form': form}
     return render(request, 'users/profile-view.html', context)

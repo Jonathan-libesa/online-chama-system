@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Apply-for-loan
+Paid_Loans
 {% endblock %}
 
 <script src="https://www.paypal.com/sdk/js?client-id=Ac49arWCa6_zpG7WtDefVWqnmbf9HSZLJmgqgq_HFpx6DbOTRCYczB75zEuzBPFNkb8filTff42_ivXf&currency=USD">
@@ -18,6 +18,13 @@ Apply-for-loan
           class="fa fa-plus"></i> Apply loan</a>
         {% endif %}
         <div class="box-body">
+             <!-- Add a new button for Excel download -->
+            <div class="text-center">
+              <a href="{% url 'paid_loan_excel' groups.pk %}?download_excel=1" class="btn btn-success btn-sm">
+                <i class="fa fa-download"></i> Download Excel Of Paid Loans
+              </a>
+            </div>
+ 
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
               <th>Full Name </th>
@@ -28,14 +35,14 @@ Apply-for-loan
               <th>Total amount</th>
             </thead>
             <tbody>
-              {% for contribution in Paid_loans %}
+              {% for contribution in loan_details %}
                 <tr>
-                  <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
-                  <td>{{ contribution.duration_months}}</td>
-                  <td>{{ contribution.groups.loan_interest_rate}}%</td>
-                  <td>{{ contribution.amount }}Ksh</td>
-                  <td>{{ contribution.get_loan_status_display }}</td>
-                  <td>{{total_amount_to_return }}Ksh</td>
+                  <td>{{ contribution.loan.member.user.first_name }}  {{ contribution.loan.member.user.last_name }}</td>
+                  <td>{{ contribution.loan.duration_months}}</td>
+                  <td>{{ contribution.loan.groups.loan_interest_rate}}%</td>
+                  <td>{{ contribution.loan.amount|floatformat:0}}Ksh</td>
+                  <td>{{ contribution.loan.get_loan_status_display }}</td>
+                  <td>{{ contribution.total_amount_to_return|floatformat:0}}Ksh</td>
                 </tr>
               {% endfor %}
             </tbody>

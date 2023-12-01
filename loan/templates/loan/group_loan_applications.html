@@ -1,0 +1,136 @@
+{% extends 'root.html' %}
+{% load static %}
+{% block title %}
+Loans_Applications
+{% endblock %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-KMP27huS5GHuETGYj7z3oQezZp5M3y5r0eaEGkDjpRpoS8Nc6OqJVPtDlfxdik6jgVpYNQ17S8lMaLcRIbCcKGA==" crossorigin="anonymous" />
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% block content %}
+<section class="content">
+  <div class="row">
+<div class="col-xs-12">
+<div class="box">
+
+<div class="box-header with-border">
+  
+  <h3 style="text-align:center;">LOAN_APPLICATIONS </h3>
+ 
+</div>
+
+<div class="box-body">
+   <!-- Add a new button for Excel download -->
+  <div class="text-center">
+    <a href="{% url 'view_Loan_Applications' groups.pk %}?download_excel=1" class="btn btn-success btn-sm">
+      <i class="fa fa-download"></i> Download Excel Of Loan Applications
+    </a>
+  </div>
+  <table id="example1" class="table table-bordered table-hover table-striped">
+    <thead style="background-color: #222D32; color:whitesmoke;">
+        <th>Date of application</th>
+        <th>Full Name </th>
+        <th>Period</th>
+        <th>Borrowed amount</th>
+        <th>Status</th>
+        <th>Action</th>
+        <th>Show_Details</th>
+      </thead>
+      <tbody>
+    {% for contribution in pending_loans %}
+    <tr>
+      <td>{{contribution.date_applied}}</td>
+      <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
+      <td>{{ contribution.duration_months}}</td>
+      <td>{{ contribution.amount }}Ksh</td>
+      <td>{{contribution.get_loan_status_display}}</td>
+      {% if request.user == groups.Chairperson %}
+     <td>
+      <form method="post" action="{% url 'view_Loan_Applications' groups.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="loan_id" value="{{ contribution.id }}">
+        <button type="submit" name="new_status" value="approved" class='btn btn-success btn-sm btn-flat'>
+          <i class='fa fa-check'></i> Approve
+        </button>
+        <button type="submit" name="new_status" value="rejected" class='btn btn-danger btn-sm btn-flat'>
+          <i class='fa fa-times'></i> Reject
+        </button>
+      </form>
+     </td>
+     {% endif %}
+     {% if request.user == groups.Chairperson %}
+    <td>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#loanDetailModal{{ contribution.id }}">
+      View Details
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="loanDetailModal{{ contribution.id }}" tabindex="-1" role="dialog" aria-labelledby="loanDetailModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"><b>LOAN DETAILS</b></h4>
+          </div>
+          <div class="modal-body">
+            <!-- Display loan details here -->
+            <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th>Date of Application</th>
+                <td>{{ contribution.date_applied }}</td>
+              </tr>
+              <tr>
+                <th>Full Name</th>
+                <td>{{ contribution.member.user.first_name }} {{ contribution.member.user.last_name }}</td>
+              </tr>
+              <tr>
+                <th>Period</th>
+                <td>{{ contribution.duration_months }}</td>
+              </tr>
+              <tr>
+                <th>Borrowed Amount</th>
+                <td>{{ contribution.amount }} Ksh</td>
+              </tr>
+              <tr>
+                <th>Status</th>
+                <td>{{ contribution.get_loan_status_display }}</td>
+              </tr>
+               <tr>
+                <th>Loan_Security</th>
+                <td>{{ contribution.security_details}}</td>
+               </tr>
+
+               <tr>
+                <th>Employment_terms</th>
+                <td>{{ contribution.employment_terms }}</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat" data-dismiss="modal">
+              <i class="fa fa-close"></i> CLOSE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+  {% endif %}
+    {% endfor %}      
+   </tbody>
+  </table>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock content %}
+
+
+
+
+

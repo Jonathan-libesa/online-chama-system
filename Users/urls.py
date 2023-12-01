@@ -12,6 +12,7 @@ urlpatterns = [
     path('request-password-reset-link/',RequestPasswordReset.as_view(),name="request-password"),
     path('set-new-password/<uidb64>/<token>',CompletePasswordReset.as_view(), name='reset-user-password'),
     path('profile_view_user/<int:pk>/', views.profile_view_user, name="user_profile"),
+    #path('update-user/', views.updateUser, name="update-user"),
 ]
 
 

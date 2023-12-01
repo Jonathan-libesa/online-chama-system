@@ -1,5 +1,6 @@
 {%extends 'root.html'%}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block title %}
  update-profile
 {% endblock %}
@@ -23,16 +24,23 @@
             <div class="card-header">
                  <i class="fa fa-align-justify"></i>User Information
             </div>
+            <br><br>
         <div class="card-body">
            <tbody>
                 <tr>
                 <td>First_Name: {{user.first_name}}</td>
                 <br>
-                <td>Last_Name: {{ user.last_name }}</td>
+                <br>
+                <td>Last_Name: {{ user.last_name}}</td>
+                <br>
                 <br>
                 <td>Username: {{user.username}}</td>
                 <br>
+                <br>
                 <td>Email:{{user.email|urlize}}<td>
+                <br>
+                <br>
+                <td>Phone_Number:{{user.phone}}</td>
                 <br>
                 </tr>
             </tbody>
@@ -48,12 +56,14 @@
                 <td>LAST LOGIN: {{user.last_login}}</td>
                 <br><br>
                 {% if request.user == user%}
-                  <a href="#" class="btn btn-primary btn-lg btn-flat ">Edit</a>
+                   <button type="button" class="btn btn-primary btn-lg btn-flat" data-toggle="modal" data-target="#editProfileModal">
+                     Edit-Profile
+                    </button>
                 {% endif %}
                 <br>
                  {% if request.user == groups.Chairperson %}
                 <div class="box-header with-border">
-                  <a href="" class="btn btn-success btn-lg btn-flat">
+                  <a href="{%  url 'view_Group' groups.pk %}" class="btn btn-success btn-lg btn-flat">
                     <i class="fa fa-cog"></i> Group setting
                   </a>
                 </div>
@@ -65,3 +75,38 @@
 </div>
 </section>
 {% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="editProfileModalLabel"><b>Edit Profile Info</b></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="POST" autocomplete="off" action="{% url 'user_profile' groups.pk %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in form %}
+            <div class="form-group has-feedback">
+              <span class="text-danger">{{ field.errors }}</span>
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+              <i class="fa fa-close"></i> Close
+            </button>
+             <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modal %}

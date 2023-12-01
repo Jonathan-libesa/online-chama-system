@@ -19,8 +19,8 @@
       </li>
       <li class=""><a href="{% url 'add_group'  %}"><span class="glyphicon glyphicon-lock"></span> <span>View Groups</span></a></li>
       <li class="header">Transaction Reports</li>
-      <li class=""><a href=""><i class="fa fa-users"></i> <span>Deposit</span></a></li>
-      <li class=""><a href=""><i class="fa fa-tasks"></i> <span>With</span></a></li>
+      <li class=""><a href="{% url 'view_members' groups.id %}"><i class="fa fa-users"></i> <span>Members</span></a></li>
+      <li class=""><a href="{% url 'loan_paid' groups.id %}"><i class="fa fa-tasks"></i> <span>Paid_loans</span></a></li>
       <li class=""><a href="{% url 'apply_loans' groups.id %}"><i class="fa fa-black-tie"></i> <span> Apply for Loans</span></a></li>
 
       <li class="header">EXIT</li>

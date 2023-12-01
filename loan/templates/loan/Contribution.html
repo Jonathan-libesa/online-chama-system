@@ -33,7 +33,7 @@ Contribution_list
                 <td>{{ contribution.member.user.last_name }}</td>
                 <td>{{ contribution.member.user.email }}</td>
                 <td>{{ contribution.categories }}</td>
-                <td>{{ contribution.total_contribution }} Ksh</td>
+                <td>{{ contribution.total_contribution|default:"0"|floatformat:0 }} Ksh</td>
               </tr>
               {% endfor %}
             </tbody>

@@ -1,5 +1,8 @@
 {% extends 'root.html' %}
 {% load static %}
+{%block title%}
+{{groups.Name}}
+{% endblock%}
 {% block content %}
 <!-- Main content -->
     <section class="content">
@@ -9,7 +12,7 @@
           <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
-              <h3>{{ combined_total}}Ksh</h3>
+              <h3>{{ combined_total|floatformat:0}}Ksh</h3>
               <p>Total Balance</p>
             </div>
             <div class="icon">
@@ -23,7 +26,7 @@
           <!-- small box -->
           <div class="small-box bg-yellow">
             <div class="inner">
-              <h3>{{ total_cash_collected }} Ksh</h3>          
+              <h3>{{ total_cash_collected|floatformat:0 }} Ksh</h3>          
               <p>Cash At Hand </p>
             </div>
             <div class="icon">
@@ -53,7 +56,7 @@
           <!-- small box -->
           <div class="small-box bg-maroon">
             <div class="inner">
-              <h3>{{ total_contribution}}Ksh</h3>
+              <h3>{{ total_contribution|floatformat:0}}Ksh</h3>
               <p>Total contribution</p>
             </div>
             <div class="icon">
@@ -89,7 +92,7 @@
           <!-- small box -->
           <div class="small-box bg-blue">
             <div class="inner">
-              <h3>{{total_expenses}} Ksh</h3>             
+              <h3>{{total_expenses|floatformat:0}} Ksh</h3>             
               <p>Total Expenses</p>
             </div>
             <div class="icon">
@@ -104,10 +107,10 @@
           <div class="small-box bg-aqua">
             <div class="inner">
               {% if total_paid_amount > 0 %}
-                <h3>{{ total_paid_amount }} Ksh</h3>
+                <h3>{{ total_paid_amount|floatformat:0}} Ksh</h3>
                 <p>Total Amount Of loan paid</p>
               {% else %}
-                <h3>{{remaining_amount_to_pay}}</h3>
+                <h3>{{remaining_amount_to_pay|floatformat:0}}</h3>
                 <p>Total Remaining amount</p>
                {% endif %}
                </div>

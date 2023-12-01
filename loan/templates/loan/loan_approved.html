@@ -29,7 +29,7 @@ Approved_loans
               <tr>
                 <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
                 <td>{{ contribution.duration_months}}</td>
-                <td>{{ contribution.amount }}Ksh</td>
+                <td>{{ contribution.amount|floatformat:0 }}Ksh</td>
                 <td>{{contribution.get_loan_status_display}}</td>
               </tr>
             {% endfor %}

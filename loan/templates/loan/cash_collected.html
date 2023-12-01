@@ -26,12 +26,12 @@ Cash-collected
               <th>Total amount</th>
             </thead>
             <tbody>
-              {% for contribution in members %}
+              {% for contribution in member_totals %}
               <tr>
                 <td>{{ contribution.member.user.first_name }}</td>
                 <td>{{ contribution.member.user.last_name }}</td>
                 <td>{{ contribution.member.user.email }}</td>
-                <td>{{ contribution.total_cash }}Ksh</td>
+                <td>{{ contribution.total_cash|default:"0"|floatformat:0 }}Ksh</td>
               </tr>
             {% endfor %}
             </tbody>

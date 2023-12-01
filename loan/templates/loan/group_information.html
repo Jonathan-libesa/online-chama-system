@@ -1,0 +1,207 @@
+{% extends 'root.html'%}
+{% load static %}
+{%block title%}
+{{groups.Name}}
+{%endblock%}
+{% block content %}
+<style>
+  /*====================
+start of  club model css
+====================*/
+body{
+    background-color: #ebeff5;
+}
+.profile-pic{
+  max-width: 35px ;
+  max-height: 35px;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+
+/*==============================
+=>  Profile
+================================*/
+.profile {
+  margin-bottom: 3rem;
+}
+
+.profile_pic {
+  max-width: 100px ;
+  max-height: 100px;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+.profile__avatar {
+  text-align: center;
+}
+
+.profile__info {
+  text-align: center;
+}
+
+.profile__info h3 {
+  font-size: 2rem;
+  color: var(--color-light);
+  font-weight: 400;
+}
+
+.profile__info p {
+  color: var(--color-main);
+  font-weight: 200;
+  margin-bottom: 1rem;
+}
+
+.profile__about {
+  margin-top: 2rem;
+  margin-left: 100px;
+}
+
+.profile__about h3 {
+  text-transform: uppercase;
+  color: var(--color-dark-light);
+  margin-bottom: 0.5rem;
+}
+
+.profile-page .roomList__header {
+  margin-bottom: 1.5rem;
+}
+
+.profile-page .roomList__header h2 {
+  color: var(--color-dark-light);
+}
+
+
+
+#card01{
+  background-color: none;
+  text-decoration: none;
+}
+
+@media(max-width=800px){
+  #card01{
+    flex: 100%;
+    max-width: 600px;
+  }
+}
+#row2{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.button {
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.button:hover {
+  background-color: #f1f1f1;
+ } 
+
+
+
+/*==============================
+=>  card event
+================================*/
+#card-header{
+  text-align:center;
+  color:dark ;
+  font-weight: 100px;
+  font-weight: 100px;
+  background-color:#4A51A8 ;
+}
+
+
+.card-img-top {
+  width: 100%;
+  height:auto;
+}
+
+/*==============================
+=>  End of  card event
+================================*/
+
+
+</style>
+<div class="container">
+  <div class="row" id ="row1">
+    <div class="card card-body " id="card01" >
+      <div class="profile">
+            {% if groups.Group_Logo %}
+            <div class="profile_pic">
+              <div>
+                <img  class="profile_pic" src="{{groups.Group_Logo.url}}" />
+              </div>
+            </div>
+            {% endif %}
+            <div class="profile__info">
+              <h3 class="text-center text-black" style="text-transform: uppercase;"><a href="">{{groups.Name}}</a></h3>
+              {% if groups.Chairperson %}
+              <p style="text-transform: uppercase;">Chairperson: {{groups.Chairperson}}</p>
+              {% endif %}
+              <p style="text-transform: uppercase;">The Group type:{{groups.grouptype.Name}}</p>
+              {% if request.user == groups.Chairperson %}
+                <a href="#editProfileModal" class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal"> Edit_Group_Profile</a>
+                <a href="{% url 'view_Loan_Applications' groups.pk %}" class="btn btn-primary">Group_Loan_Application</a>
+                <a href="{% url 'rejected_loans' groups.pk %}" class="btn btn-primary">Group_Rejected_Loans</a>
+              {% endif %}
+
+            </div>
+            <div class="profile__about">
+              <h3>Group_Interest_rate:</h3>
+              <p style="text-transform: uppercase;">
+                {{groups.loan_interest_rate}} %
+              </p>
+              <h3>Meet up Place:</h3>
+               <p>{{ career.Meeting_place}}</p>
+            </div>
+          </div>
+          <br>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="editProfileModalLabel"><b>Edit Group Info</b></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="POST" autocomplete="off" action="{% url 'view_Group' groups.pk %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in form %}
+            <div class="form-group has-feedback">
+              <span class="text-danger">{{ field.errors }}</span>
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+              <i class="fa fa-close"></i> Close
+            </button>
+             <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modal %}
+

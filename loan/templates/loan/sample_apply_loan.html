@@ -1,0 +1,151 @@
+{% extends 'root.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+Apply-for-loan
+{% endblock %}
+<script src="https://www.paypal.com/sdk/js?client-id=Ac49arWCa6_zpG7WtDefVWqnmbf9HSZLJmgqgq_HFpx6DbOTRCYczB75zEuzBPFNkb8filTff42_ivXf&currency=USD">
+</script>
+{% block content %}
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header with-border">
+          {% if member_loans|can_apply_loan %}
+              <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat">
+                <i class="fa fa-plus"></i> Apply for loan
+              </a>
+            {% else %}
+              <button class="btn btn-secondary btn-sm btn-flat" disabled>
+                Loan Application Restricted
+              </button>
+          {% endif %}
+        </div>
+        <div class="box-body">
+          <table id="example1" class="table table-bordered table-hover table-striped">
+            <thead style="background-color: #222D32; color:white;">
+              <th>Date of application</th>
+              <th>Full Name </th>
+              <th>Period</th>
+              <th>interest rate/PM</th>
+              <th>Borrowed amount</th>
+              <th>Status</th>
+              <th>Total to return amount</th>
+              <th>Remaining amount</th>
+              <th>Pay Loan</th>
+            </thead>
+            <tbody>
+              {% for contribution in loan_details %}
+                <tr>
+                  <td>{{contribution.loan.date_applied}}</td>
+                  <td>{{ contribution.loan.member.user.first_name }}  {{ contribution.loan.member.user.last_name }}</td>
+                  <td>{{ contribution.loan.duration_months}}</td>
+                  <td>{{ contribution.loan.groups.loan_interest_rate}}%</td>
+                  <td>{{ contribution.loan.amount|floatformat:0 }}Ksh</td>
+                  <td>
+                    {% if contribution.loan.is_fully_paid %}
+                        Paid
+                    {% else %}        
+                      {{ contribution.loan.get_loan_status_display }}
+                    {% endif %}
+                  </td>
+                  <td>{{ contribution.total_amount_to_return|floatformat:0 }}Ksh</td>
+                  <td> {{ contribution.remaining_amount|floatformat:0 }} Ksh</td>
+                    <td>
+                    {% if not contribution.loan.is_fully_paid %}
+                      <button class="btn btn-primary btn-sm btn-flat" data-toggle="modal" data-target="#payLoanModal{{ contribution.loan.id }}">
+                        Pay Loan
+                      </button>
+                    {% else %}
+                      <button class="btn btn-secondary btn-sm btn-flat" disabled>
+                        Already Paid
+                      </button>
+                    {% endif %}
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% for contribution in loan_details %}
+  <!-- LOAN PAYMENT FORM -->
+  <div class="modal fade" id="payLoanModal{{ contribution.loan.id }}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title"><b>PAY YOUR LOAN</b></h4>
+        </div>
+        <div class="modal-body">
+          <!-- PayPal payment form -->
+          <form id="paypal-payment-form-{{ contribution.loan.id }}">
+            <div class="form-group">
+              <label for="paymentAmount{{ contribution.loan.id }}">Payment Amount:</label>
+              <input type="number" step="0.01" min="0.01" id="paymentAmount{{ contribution.loan.id }}" name="paymentAmount" required>
+            </div>
+            <div id="paypal-payment-container-{{ contribution.loan.id }}"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END OF LOAN PAYMENT FORM -->
+
+  <script>
+    // Add a script to initialize PayPal Buttons for each payment modal
+    paypal.Buttons({
+      style: {
+        color: 'blue',
+        shape: 'rect',
+        label: 'pay',
+        height: 40
+      },
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: $('#paymentAmount{{ contribution.loan.id }}').val(), // Use the entered payment amount
+              currency_code: 'USD',
+            }
+          }]
+        });
+      },
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
+          // Call your backend to save payment details
+          $.ajax({
+            url: '{% url "process_paypal_payment" %}',
+            method: 'POST',
+            data: {
+              loan_id: '{{ contribution.loan.id }}',
+              amount_paid: details.purchase_units[0].amount.value,
+              paypal_order_id: data.orderID,
+            },
+            success: function (response) {
+              // Handle success response, e.g., show a success message
+              alert(response.message);
+              // Close the PayPal payment modal
+              $('#payLoanModal{{ contribution.loan.id }}').modal('hide');
+              // Optionally, refresh the loan details table
+              // window.location.reload();
+            },
+            error: function (error) {
+              // Handle error, e.g., show an error message
+              alert(error.responseJSON.message);
+            }
+          });
+        });
+      }
+    }).render('#paypal-payment-container-{{ contribution.loan.id }}');
+  </script>
+{% endfor %}

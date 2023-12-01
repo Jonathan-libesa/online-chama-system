@@ -4,7 +4,6 @@
  Make_Contribution
 {% endblock %}
 {% block content %}  
-<link rel="stylesheet" href="{% static 'assets/css/partner.css' %}">
 
 <script src="https://www.paypal.com/sdk/js?client-id=Ac49arWCa6_zpG7WtDefVWqnmbf9HSZLJmgqgq_HFpx6DbOTRCYczB75zEuzBPFNkb8filTff42_ivXf&currency=USD">
 </script>
@@ -12,10 +11,10 @@
 <div id="container">
         <div class="row">
             <div id="left-wrapper">
-                <img id="profile-pic" src="{% static 'assets/img/allan.jpg' %}">
+                <img id="profile-pic" src="">
                 <div id="left-wrapper-header">
-                    <h3> Do You Want To Contribute :${{contribute.amount}}KSH</h3>
-                    <h5>Amount :${{contribute.amount}}</h5>
+                    <h3> Do You Want To Contribute :${{ contribution_form.amount.value }}KSH</h3>
+                    <h5>Amount :${{ contribution_form.amount.value }}</h5>
                 </div>
                 <div style="clear:left"></div>
                 <hr>
@@ -30,13 +29,13 @@
         </div>
         <br><br>
         <div class="column-12">
-            <img src="{% static 'assets/img/paypal.png'%}">
+            <img src="">
             <br><br>
-            <img src="{% static 'assets/img/pay.jpg'%}">
+            <img src="">
         </div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <script>
-        var total ={{contribute.amount}}
+        var total ={{ contribution_form.amount.value|default:"0" }}
 
         // Render the PayPal button into #paypal-button-container
         paypal.Buttons({
@@ -53,7 +52,7 @@
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: '{{contribute.amount}}'
+                            value: total
                         }
                     }]
                 });

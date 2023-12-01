@@ -27,7 +27,7 @@ Fine
     <tr>
       <td>{{ member.Full_Name }}</td>
       <td>{{ member.reason }}</td>
-      <td>{{member.amount}} Ksh</td>
+      <td>{{member.amount|floatformat:0}} Ksh</td>
     </tr>
     {% endfor %}      
 

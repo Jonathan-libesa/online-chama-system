@@ -1,0 +1,87 @@
+{% extends 'root.html' %}
+{% load static %}
+{% block title %}
+Rejected_loans
+{% endblock %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-KMP27huS5GHuETGYj7z3oQezZp5M3y5r0eaEGkDjpRpoS8Nc6OqJVPtDlfxdik6jgVpYNQ17S8lMaLcRIbCcKGA==" crossorigin="anonymous" />
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% block content %}
+<section class="content">
+  <div class="row">
+<div class="col-xs-12">
+<div class="box">
+
+<div class="box-header with-border">
+  
+  <h3 style="text-align:center;">REJECTED_LOANS</h3>
+ 
+</div>
+
+<div class="box-body">
+   <!-- Add a new button for Excel download -->
+  <div class="text-center">
+    <a href="{% url 'view_Loan_Applications' groups.pk %}?download_excel=1" class="btn btn-success btn-sm">
+      <i class="fa fa-download"></i> Download Excel Of Loan Applications
+    </a>
+  </div>
+  <table id="example1" class="table table-bordered table-hover table-striped">
+    <thead style="background-color: #222D32; color:whitesmoke;">
+        <th>Date of application</th>
+        <th>Full Name </th>
+        <th>Period</th>
+        <th>Borrowed amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </thead>
+      <tbody>
+    {% for contribution in rejected_loans %}
+    <tr>
+      <td>{{contribution.date_applied}}</td>
+      <td>{{ contribution.member.user.first_name }}  {{ contribution.member.user.last_name }}</td>
+      <td>{{ contribution.duration_months}}</td>
+      <td>{{ contribution.amount }}Ksh</td>
+      <td>{{contribution.get_loan_status_display}}</td> 
+      {% if request.user == groups.Chairperson %}
+                 <td>
+                  <form method="post" action="{% url 'rejected_loans' groups.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="loan_id" value="{{ contribution.id }}">
+                    <button type="submit" name="approve_specific" class='btn btn-success btn-sm btn-flat'>
+                      <i class='fa fa-check'></i> Approve
+                    </button>
+                  </form>
+                 </td>
+                {% endif %}  
+    {% endfor %}      
+   </tbody>
+ </tr>
+
+  {% if total_rejected_loans > 0 %}
+  <div class="pull-right">
+          <!-- Add any other details you want to display -->
+            <form method="post" action="{% url 'rejected_loans' groups.pk %}">
+                {% csrf_token %}
+            <button type="submit" name="delete_all" class="btn btn-danger">Delete All Rejected Loans</button>
+          </form>
+    </div>
+    <!-- Add any other details you want to display -->
+    <div class="pull-left">
+    <form method="post" action="{% url 'rejected_loans' groups.pk %}">                       
+      {% csrf_token %}
+      <button type="submit" name="approve_all" class="btn btn-primary">Approve All Rejected Loans</button>
+    </form>
+   </div>
+    {% endif %}
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock content %}
+
+
+
+
+

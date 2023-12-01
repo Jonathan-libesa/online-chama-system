@@ -18,6 +18,14 @@ Apply-for-loan
             <i class="fa fa-plus"></i> Apply for loan
           </a>
         </div>
+          <div class="box-body">
+             <!-- Add a new button for Excel download -->
+            <div class="text-center">
+              <a href="{% url 'generate_excel_loan_details' pk=groups.id %}?download_excel=1" class="btn btn-primary btn-sm">
+                <i class="fa fa-download"></i> Download Excel Applied  Loans
+              </a>
+            </div>
+
         <div class="box-body">
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
@@ -38,7 +46,7 @@ Apply-for-loan
                   <td>{{ contribution.loan.member.user.first_name }}  {{ contribution.loan.member.user.last_name }}</td>
                   <td>{{ contribution.loan.duration_months}}</td>
                   <td>{{ contribution.loan.groups.loan_interest_rate}}%</td>
-                  <td>{{ contribution.loan.amount }}Ksh</td>
+                  <td>{{ contribution.loan.amount|floatformat:0 }}Ksh</td>
                   <td>
                     {% if contribution.loan.is_fully_paid %}
                         Paid
@@ -46,8 +54,8 @@ Apply-for-loan
                       {{ contribution.loan.get_loan_status_display }}
                     {% endif %}
                   </td>
-                  <td>{{ contribution.total_amount_to_return }}Ksh</td>
-                  <td> {{ contribution.remaining_amount }} Ksh</td>
+                  <td>{{ contribution.total_amount_to_return|floatformat:0}}Ksh</td>
+                  <td> {{ contribution.remaining_amount|floatformat:0}} Ksh</td>
                     <td>
                     {% if not contribution.loan.is_fully_paid %}
                       <button class="btn btn-primary btn-sm btn-flat" data-toggle="modal" data-target="#payLoanModal{{ contribution.loan.id }}">
@@ -143,4 +151,3 @@ Apply-for-loan
 <!-- END OF LOAN PAYMENT FORM-->
  
 {% endblock modal %}
-

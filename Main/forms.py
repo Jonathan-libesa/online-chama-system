@@ -12,11 +12,21 @@ class userForm(FormSettings):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'phone','is_email_verified']
 
+class PinCreationForm(FormSettings):
+    pin = forms.IntegerField(label='PIN', widget=forms.PasswordInput)
+
+    def clean_pin(self):
+        pin = self.cleaned_data.get('pin')
+        # Add any validation logic for the PIN here, for example, minimum length, etc.
+        return pin
+    class Meta:
+        model=Members
+        fields=['pin']
 
 class GroupForm(FormSettings):
     class Meta:
         model =  Group
-        fields = ['Name','grouptype','loan_interest_rate']
+        fields = ['Name','grouptype','loan_interest_rate','withdrawal_minimum','withdrawal_maximum']
 
 
 class MemberForm(FormSettings):
@@ -80,8 +90,16 @@ class PaymentForm(FormSettings):
 class GroupEditForm(FormSettings):
     class Meta:
         model =  Group
-        fields = ['Name','grouptype','loan_interest_rate','Group_Logo']
+        fields = ['Name','grouptype','loan_interest_rate','Group_Logo','withdrawal_minimum','withdrawal_maximum']
 
+
+
+
+
+class InvestmentForm(FormSettings):
+    class Meta:
+        model = Investment
+        fields = ['Name', 'Investment_type', 'amount']
 
 
 #class ApplyForm(FormSettings):

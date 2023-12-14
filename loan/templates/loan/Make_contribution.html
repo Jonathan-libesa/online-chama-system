@@ -13,8 +13,13 @@
             <div id="left-wrapper">
                 <img id="profile-pic" src="">
                 <div id="left-wrapper-header">
-                    <h3> Do You Want To Contribute :${{ contribution_form.amount.value }}KSH</h3>
-                    <h5>Amount :${{ contribution_form.amount.value }}</h5>
+                    <h2>{{groups.Name}}</h2>
+                    {% for contribution in contributions %}
+       
+                    <h3> Do You Want To Contribute :${{  contribution.amount}}KSH</h3>
+                    <h5>Amount :${{ contribution.amount }}</h5>
+
+                        {% endfor %}
                 </div>
                 <div style="clear:left"></div>
                 <hr>
@@ -35,7 +40,7 @@
         </div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <script>
-        var total ={{ contribution_form.amount.value|default:"0" }}
+        var total = 
 
         // Render the PayPal button into #paypal-button-container
         paypal.Buttons({
@@ -52,7 +57,7 @@
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: total
+                            value: 30 
                         }
                     }]
                 });
@@ -63,7 +68,7 @@
                 return actions.order.capture().then(function(orderData) {
                     // Successful capture! For demo purposes:
                       console.log('Capture result', orderData);
-                      window.location.href = '{% url "group_contributions" groups.id%}';
+                      window.location.href = '{% url "group_contributions" groups.pk %}';
                      //Or go to another URL:  actions.redirect('sucess.html')
                 });
             }

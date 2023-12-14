@@ -1,3 +1,5 @@
+
+
 from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
@@ -6,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [  
     path('', views.index),
     path('create_group/', views.creategroup, name="add_group"),
+    #path('create_groups/', views.reategroup, name="add_groups"),
     path('dashboard/<int:pk>/',views.dashboard,name="dashboard"),
 
     path('view_members/<int:group_id>/', views.view_members, name='view_members'),
@@ -17,9 +20,6 @@ urlpatterns = [
 
     path('group/<int:pk>/fines/',views.create_view_fines, name='group_fines'),
 
-    #path('process_payment/<int:loan_id>/', views.process_payment, name='process_payment'),
-    #path('pay_loan/<int:loan_id>/',views.pay_loan, name='pay_loan'),
-
 
     path('group_paid_loan/<int:pk>/', views.view_Paid_loan, name='loan_paid'),
 
@@ -28,8 +28,18 @@ urlpatterns = [
 
     path('group/<int:pk>/Loan-Applications/', views.view_Loan_Applications, name='view_Loan_Applications'),
     
-    path('process_paypal_payment/', views.process_paypal_payment, name='process_paypal_payment'),
-    #path('remove_member/<int:member_id>/', views.remove_member, name='remove_member'),
+    
 
+    path('add_selected_members/<int:group_id>/', views.add_selected_members, name='add_selected_members'),
+
+
+
+    path('group_account/<int:pk>/',views.group_accounts,name="accounts"),
+
+    path('set_pin_withdrawal/<int:pk>/', views.create_pin, name="create pin"),
+
+    path('group_contributions_lists/<int:pk>/', views.group_contributions_list, name='group_contribution-list'),
+
+    path('download_excel/<int:pk>/', views.download_excel, name='download_excel'),
 ]
 

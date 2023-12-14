@@ -1,5 +1,9 @@
 from django.db import models
+
 from Main.models import *
+
+
+
 # Create your models here.
 
 
@@ -49,9 +53,15 @@ class Loan(models.Model):
     class Meta:
         ordering=['-date_applied']
 
-    #def calculate_total_amount(self):
-    #if self.groups is None or self.groups.loan_interest_rate is None or self.amount is None or self.duration_months is None:
-        #return None 
+
+
+    def calculate_interest(self):
+        # Calculate interest for the loan based on its attributes and duration
+        monthly_interest_rate = self.groups.loan_interest_rate / 100 
+        total_interest = self.amount * monthly_interest_rate * self.duration_months
+        return Decimal(total_interest).quantize(Decimal('0.01'))
+
+
 
 
     def calculate_total_amount(self):

@@ -1,0 +1,19 @@
+{%extends 'root.html'%}
+{% load static %}
+{% block title %}
+ update-profile
+{% endblock %}
+{% block content %}
+<section class="content">
+    <div class="card-title py-3">
+       <h2 class="text-center">Create Your Pin</h2>
+   </div>
+    <form method="post" action="{% url 'create pin' groups.pk %}">
+    <div class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </div>
+        <button type="submit" class="btn btn-primary " >Save</button>
+    </form>
+</section>
+{% endblock %}

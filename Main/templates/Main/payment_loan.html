@@ -1,0 +1,152 @@
+{% extends 'root.html' %}
+{% load static %}
+
+{% block title %}
+Apply-for-loan
+{% endblock %}
+
+<script src="https://www.paypal.com/sdk/js?client-id=Ac49arWCa6_zpG7WtDefVWqnmbf9HSZLJmgqgq_HFpx6DbOTRCYczB75zEuzBPFNkb8filTff42_ivXf&currency=USD">
+</script>
+
+{% block content %}
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header with-border">
+          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat">
+            <i class="fa fa-plus"></i> Apply for loan
+          </a>
+        </div>
+          <div class="box-body">
+             <!-- Add a new button for Excel download -->
+            <div class="text-center">
+              <a href="{% url 'generate_excel_loan_details' pk=groups.id %}?download_excel=1" class="btn btn-primary btn-sm">
+                <i class="fa fa-download"></i> Download Excel Applied  Loans
+              </a>
+            </div>
+
+        <div class="box-body">
+          <table id="example1" class="table table-bordered table-hover table-striped">
+            <thead style="background-color: #222D32; color:white;">
+              <th>Date of application</th>
+              <th>Full Name </th>
+              <th>Period</th>
+              <th>Borrowed amount</th>
+              <th>Status</th>
+              <th>Total to return amount</th>
+              <th>Remaining amount</th>
+              <th>Pay Loan</th>
+            </thead>
+            <tbody>
+              {% for contribution in loan_details %}
+                <tr>
+                  <td>{{contribution.loan.date_applied}}</td>
+                  <td>{{ contribution.loan.member.user.first_name }}  {{ contribution.loan.member.user.last_name }}</td>
+                  <td>{{ contribution.loan.duration_months}}</td>
+                  <td>{{ contribution.loan.groups.loan_interest_rate}}%</td>
+                  <td>{{ contribution.loan.amount|floatformat:0 }}Ksh</td>
+                  <td>
+                    {% if contribution.loan.is_fully_paid %}
+                        Paid
+                    {% else %}        
+                      {{ contribution.loan.get_loan_status_display }}
+                    {% endif %}
+                  </td>
+                  <td>{{ contribution.total_amount_to_return|floatformat:0}}Ksh</td>
+                  <td> {{ contribution.remaining_amount|floatformat:0}} Ksh</td>
+                    <td>
+                    {% if not contribution.loan.is_fully_paid %}
+                      <button class="btn btn-primary btn-sm btn-flat" data-toggle="modal" data-target="#payLoanModal{{ contribution.loan.id }}">
+                        Pay Loan
+                      </button>
+                    {% else %}
+                      <button class="btn btn-secondary btn-sm btn-flat" disabled>
+                        Already Paid
+                      </button>
+                    {% endif %}
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="addnew">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"><b>Add your Loan information</b></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="POST" action="{% url 'apply_loans' groups.id %}">
+          {% csrf_token %}
+          <div class="modal-body">
+            {% for field in form %}
+            <div class="form-group has-feedback">
+              <span class="text-danger">{{ field.errors }}</span>
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+              <i class="fa fa-close"></i> Close
+            </button>
+             <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOAN PAYMENT FORM -->
+{% for contribution in loan_details %}
+<div class="modal fade" id="payLoanModal{{ contribution.loan.id }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"><b>PAY YOUR LOAN</b></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="POST" action="{% url 'apply_loans' groups.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="loan_id" value="{{ contribution.loan.id }}">
+          <div class="modal-body">
+            {% for field in payment_form %}
+            <div class="form-group has-feedback">
+              <span class="text-danger">{{ field.errors }}</span>
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+              <i class="fa fa-close"></i> CLOSE
+            </button>
+             <button type="submit" class="btn btn-success btn-flat"><i class="fa fa-money"></i>PAY</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+<!-- END OF LOAN PAYMENT FORM-->
+ 
+{% endblock modal %}

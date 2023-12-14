@@ -1,3 +1,6 @@
+
+
+
 """Chama system URL Configuration
 """
 from django.contrib import admin
@@ -10,9 +13,6 @@ urlpatterns = [
     path('', include('Main.urls')),
     path('', include('loan.urls')),
     path('', include('Users.urls')),
-    #path('', include('Preaching.urls')),
-    #path('',include('Partner.urls')),
-    #path('',include('Mpesa.urls')),
 
 ]
 

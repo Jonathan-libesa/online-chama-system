@@ -10,3 +10,7 @@ admin.site.register(Grouptype)
 admin.site.register(Category)
 admin.site.register(Contribution)
 admin.site.register(Cash)
+admin.site.register(Investment)
+
+
+

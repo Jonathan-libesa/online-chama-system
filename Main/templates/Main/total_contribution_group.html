@@ -1,0 +1,192 @@
+{% extends 'root.html' %}
+{% load static %}
+
+{% block title %}
+Contribution_list
+{% endblock %}
+
+{% block content %}
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+    
+         <!-- Add a new button for Excel download -->
+            <div class="text-center">
+              <a href="{% url 'download_excel' groups.id %}" class="btn btn-primary btn-sm">
+                <i class="fa fa-download"></i> Download Excel Of Group Contributions
+              </a>
+            </div>
+
+        <div class="box-body">
+          <table id="example1" class="table table-bordered table-hover table-striped">
+            <thead style="background-color: #222D32; color:white;">
+              <th>Date_contributed</th>
+              <th>Full_Name</th>
+              <th>Category</th>
+              <th>amount</th>
+            </thead>
+            <tbody>
+                {% for member_contribution in member_contributions %}
+                {% for contribution in member_contribution.contributions %}
+             <tr>
+                <td>{{ contribution.date_created }}</td>
+                <td>{{ contribution.member.user.first_name }}{{ contributions.member.user.last_name }}</td>
+                <td>{{ contribution.categories }}</td>
+                <td>{{ contribution.amount}} KES</td>
+                <!--td>{{ contribution.total_contribution|default:"0"|floatformat:0 }} Ksh</td-->
+              </tr>
+              {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
+
+{% block modal %}
+<script src="https://www.paypal.com/sdk/js?client-id=Ac49arWCa6_zpG7WtDefVWqnmbf9HSZLJmgqgq_HFpx6DbOTRCYczB75zEuzBPFNkb8filTff42_ivXf&currency=USD"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var formSubmitted = false;
+
+        paypal.Buttons({
+            style: {
+                color: 'blue',
+                shape: 'rect',
+                label: 'pay',
+                height: 40
+            },
+
+            createOrder: function (data, actions) {
+                // Check if all required fields are filled before allowing PayPal submission
+                if (checkFormValidity()) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: $('#id_amount').val()  // Replace with the actual total amount
+                            }
+                        }]
+                    });
+                } else {
+                    // Display form error if fields are required
+                    alert('Please fill in all required fields before proceeding with PayPal.');
+                    return false;
+                }
+            },
+
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (orderData) {
+                    console.log('Capture result', orderData);
+
+                    // Set the formSubmitted flag to true
+                    formSubmitted = true;
+
+                    // Trigger form submission
+                    $('#contributeForm').submit();
+                });
+            }
+        }).render('#paypal-button-container');
+
+        // Handle form submission using PayPal script
+        $('#contributeForm').submit(function (event) {
+            if (!formSubmitted) {
+                // Prevent the form from submitting directly if not completed via PayPal
+                event.preventDefault();
+                alert('Please complete the payment with PayPal before submitting the form.');
+            }
+        });
+
+        function checkFormValidity() {
+            // Check if all required fields are filled
+            var isValid = true;
+            $('#contributeForm :input[required]').each(function () {
+                if ($.trim($(this).val()) === '') {
+                    isValid = false;
+                    return false;  // Break out of the loop if a required field is empty
+                }
+            });
+            return isValid;
+        }
+    });
+</script>
+
+<div class="modal fade" id="addnew">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"><b>Add Amount</b></h4>
+            </div>
+            <div class="modal-body">
+                <!-- Add form here -->
+                <form action="{% url 'group_contributions' groups.pk %}" method="post" id="contributeForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        {% for field in contribute_form %}
+                            <div class="form-group has-feedback">
+                                <span class="text-danger">{{ field.errors }}</span>
+                                {{ field.label_tag }}
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                        <div id="paypal-button-container"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+                            <i class="fa fa-close"></i> Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="ddnew">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"><b>Withdraw Amount</b></h4>
+            </div>
+            <div class="modal-body">
+                <!-- Add form here -->
+                <form action="{% url 'group_contributions' groups.pk %}" method="post" id="contributeForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+
+                    <!-- Add this form to enable withdrawal -->
+                    <form method="post" action="{% url 'group_contributions' pk=groups.id %}" class="form-group has-feedback">
+                      {% csrf_token %}
+                      <input type="hidden" name="withdraw" value="true">
+                      <label for="withdrawal_amount">Enter Amount:</label>
+                      <input type="number" name="withdrawal_amount" required class="form-control form-control-lg">
+                      <br>
+                      <label for="withdrawal_pin" class="">Enter Pin:</label>
+                      <input type="password" name="withdrawal_pin"class="form-control form-control-lg" required>
+                    
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">
+                            <i class="fa fa-close"></i> Close
+                        </button>
+                         <button type="submit" class="btn btn-primary btn-flat pull-right">
+                            <i class="fa fa-save"></i>Withdraw
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock modal %}

@@ -24,8 +24,10 @@ Pendings_loans
               <th>Period</th>
               <th>Borrowed amount</th>
               <th>Status</th>
+              {% if request.user == groups.Chairperson %}
               <th>Update_Status</th>
               <th>Show_Details</th>
+               {%  endif %}
               
             </thead>
             <tbody>

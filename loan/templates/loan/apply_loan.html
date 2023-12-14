@@ -38,6 +38,7 @@ Apply-for-loan
               <th>Total to return amount</th>
               <th>Remaining amount</th>
               <th>Pay Loan</th>
+              <th>Download payment history</th>
             </thead>
             <tbody>
               {% for contribution in loan_details %}
@@ -66,6 +67,11 @@ Apply-for-loan
                         Already Paid
                       </button>
                     {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'download_loan_payment'  pk=contribution.loan.groups.id %}" class="btn btn-info btn-sm btn-flat">
+                          <i class="fa fa-download"></i> Download Payments
+                        </a>
                     </td>
                 </tr>
               {% endfor %}

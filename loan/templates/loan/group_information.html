@@ -150,7 +150,9 @@ body{
               <p style="text-transform: uppercase;">The Group type:{{groups.grouptype.Name}}</p>
               {% if request.user == groups.Chairperson %}
                 <a href="#editProfileModal" class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal"> Edit_Group_Profile</a>
-                <a href="{% url 'view_Loan_Applications' groups.pk %}" class="btn btn-primary">Group_Loan_Application</a>
+                <a href="{% url 'view_Loan_Applications' groups.pk %}" class="btn btn-primary">Group_Loan_application</a>
+                <a href="{% url 'group_contribution-list' groups.pk %}" class="btn btn-primary">Group_Contribution_view</a>
+                <a href="{% url 'group_contribution-list' groups.pk %}" class="btn btn-primary">Group_loan_payment</a>
                 <a href="{% url 'rejected_loans' groups.pk %}" class="btn btn-primary">Group_Rejected_Loans</a>
               {% endif %}
 
@@ -160,7 +162,6 @@ body{
               <p style="text-transform: uppercase;">
                 {{groups.loan_interest_rate}} %
               </p>
-              <h3>Meet up Place:</h3>
                <p>{{ career.Meeting_place}}</p>
             </div>
           </div>

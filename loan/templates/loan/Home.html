@@ -13,12 +13,12 @@
           <div class="small-box bg-aqua">
             <div class="inner">
               <h3>{{ combined_total|floatformat:0}}Ksh</h3>
-              <p>Total Balance</p>
+              <p>Total Group account Balance</p>
             </div>
             <div class="icon">
               <i class="fa fa-balance-scale"></i>
             </div>
-            <a href="" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{% url 'accounts' groups.id %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -57,7 +57,7 @@
           <div class="small-box bg-maroon">
             <div class="inner">
               <h3>{{ total_contribution|floatformat:0}}Ksh</h3>
-              <p>Total contribution</p>
+              <p>Total  Group contribution </p>
             </div>
             <div class="icon">
               <i class="fa fa-money"></i>
@@ -139,15 +139,6 @@
         <!-- ./col -->
       </section>
         
-      <div class="row">
-        <div class="col-xs-12">
-            <span class="pull-right">
-              <a href="#" class="btn btn-success btn-sm btn-flat"><span class="glyphicon glyphicon-print"></span> Print/Download PDF <i class="fa fa-download"></i></a>
-            </span>
-          </h3>
-        </div>
-      </div>
-
      {% for position in positions %}
      {% if not forloop.counter|divisibleby:2 %}
      <div class='row'>

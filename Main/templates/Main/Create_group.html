@@ -66,7 +66,7 @@
     {% for group in groups %}
       
     <tr>
-      <td>{{group.Name}}</td>
+      <td><a href="{% url 'dashboard' group.pk %}">{{group.Name}}</td></a>
       <td>{{ group.Chairperson.first_name}} {{group.Chairperson.last_name}} </td>
       <td><a class="btn btn-success btn-sm" href="{% url 'dashboard' group.pk %}">View</a></td>
     </tr>

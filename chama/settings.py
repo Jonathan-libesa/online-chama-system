@@ -86,10 +86,27 @@ WSGI_APPLICATION = 'chama.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+       'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    
     }
 }
+
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+
+#DATABASES = {
+   # 'default': {
+    #    'ENGINE': 'django.db.backends.postgresql',
+    #    'NAME':'railway' ,
+    #    'USER':'postgres',
+    #    'PASSWORD':'3fbG*dEaF36-1cFEb1c*3CCAd6b*3bFf',
+    #    'HOST':'monorail.proxy.rlwy.net',
+    #    'PORT':'28415',
+    #    'CONN_MAX_AGE': 30,
+    #}
+#}
 
 
 # Password validation

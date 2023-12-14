@@ -1,0 +1,82 @@
+{% extends 'root.html' %}
+{% load static %}
+
+{% block title %}
+Group_account Balance
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        /* Styling for the section */
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px; /* Adjust the height as needed */
+        }
+
+        /* Basic styling for the card */
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            text-align: center; /* Center the text within the card */
+        }
+
+        /* Styling for the headings */
+        .card h2 {
+            color: #333;
+        }
+
+        /* Styling for the individual sections */
+        .section {
+            margin-bottom: 10px;
+        }
+
+        .section label {
+            font-weight: bold;
+        }
+
+        .section span {
+            color: #4CAF50; /* Green color for positive values */
+        }
+
+        .section span.negative {
+            color: #FF5733; /* Red color for negative values */
+        }
+    </style>
+    <section class="content">
+        <div class="card col-md-12">
+            <h2>Group Financial Summary</h2>
+
+            <div class="section">
+                <label >Total Savings and Contribution:</label>
+                <span>{{ combined_total|floatformat:0}} KSH</span>
+            </div>
+
+            <div class="section">
+                <label>Total Loan Borrowed:</label>
+                <span  class="negative">{{remaining_amount_to_pay|floatformat:0}} KSH</span>
+            </div>
+
+            <div class="section">
+                <label>Total Loan Paid:</label>
+                <span>{{ total_paid_amount|floatformat:0}} KSH</span>
+            </div>
+
+            <div class="section">
+                <label>Total Unpaid Interest:</label>
+                <span  class="negative" >{{ total_interest|floatformat:0}} KSH</span>
+            </div>
+
+
+            <div class="section">
+                <label>Total Paid Interest:</label>
+                <span>{{ total_int|floatformat:0}} KSH</span>
+            </div>
+        </div>
+    </section>
+{% endblock %}  
